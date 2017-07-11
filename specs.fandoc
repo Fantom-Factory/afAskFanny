@@ -1,0 +1,41 @@
+
+
+Something I noticed when I was learning Fantom, is that the reference documentation is extremely complete. It is also very, very hard to find what you need, and search results are very hit and miss.
+
+I've been mulling over this problem of Fantom examples for some time now (as it's been brought up in the past) and thought I'd share my ideas...
+
+...I'm sharing my thoughts (and not just forging ahead) because a) I'm not always right(!) and b) it'd be nice to hear other ideass
+
+
+
+Problem
+*******
+So you need Fantom examples, and lots of them. The problem is twofold:
+
+ - people who need examples don't know the answer
+ - people who have the answers, don't know the questions
+
+This forum isn't a great media for hunting down examples or answers to specific questions because:
+
+ - search results are a mix of reference documentation and forum posts
+ - forum posts are often too advanced for newcomers...
+ - ...which acts as a barrier for people wanting to ask simple questions
+
+
+
+Proposal 1 - How Do I...
+*************************
+So I was thinking of creating a simple Q&A web site aimed at beginners.
+
+The front page is a search box prefixed with "How do I..." and you type in the rest. Examples would be:
+
+ - How do I read a File to a Str?
+ - How do I open a Window?
+ - How do I create an empty List?
+
+Each question has it's own answer page with a brief answer and links to relivant documentation.
+
+
+
+Proposal 2 - Tell me about...
+*****************************
