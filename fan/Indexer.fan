@@ -12,7 +12,7 @@ const class Index {
 			throw ArgErr("Keywords can not contain whitespace! $keyword")
 		
 		secs	:= (Section[]) (sections[keyword] ?: Section[,])		
-		stemmed := Section.stem(keyword)
+		stemmed := SectionBuilder.stem(keyword)
 		if (stemmed != keyword)
 			secs.addAll(sections[stemmed] ?: Section#.emptyList)
 
