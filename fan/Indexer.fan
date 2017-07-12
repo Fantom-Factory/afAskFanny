@@ -51,18 +51,17 @@ class IndexBuilder {
 	}
 
 	private Void indexTypes(DocPod docPod, SectionBuilder podSec) {
-		
 		docPod.types.each |DocType type| {
 			typeSec  := SectionBuilder.makeType(type) { it.parents.push(podSec) }
 
-//			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
-//			secs.each { it.parents.push(typeSec).push(podSec) }
-//
+			secs := (SectionBuilder[]) type.slots.map {
+				SectionBuilder.makeSlot(it)
+			}
+			secs.each { it.parents.push(typeSec).push(podSec) }
+
 			sections.add(typeSec.toSection)
-//			sections.addAll(secs.map { it.toSection })
+			sections.addAll(secs.map { it.toSection })
 		}
-		
-		return this
 	}
 
 	
