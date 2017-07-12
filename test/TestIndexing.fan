@@ -78,7 +78,7 @@ internal class TestIndexing : Test {
 	Void tellMeAbout(Str keyword) {
 		secs := index.tellMeAbout(keyword)
 		
-		out := secs.join("\n\n" + ("-" * 120) + "\n\n") { it.toPlainText(120) }
+		out := secs.join("\n\n" + ("-" * 120)) { it.toPlainText(120) }
 		echo(out)
 	}
 	

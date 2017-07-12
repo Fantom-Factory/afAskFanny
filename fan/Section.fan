@@ -2,6 +2,7 @@ using fandoc
 using compilerDoc
 
 const class Section {
+	const Str		what
 	const Str		pod
 	const Str?		type
 	const Str		title
@@ -26,9 +27,9 @@ const class Section {
 
 	Str toPlainText(Int maxWidth := 80) {
 		lev := 0
-		text := "\n\n${webUrl}\n\n"
+		text := "\n\n(${what})\n${webUrl}\n\n"
 		parents.dup.insert(0, this).eachr {
-			text += "  " * lev
+			text += "".justl(lev * 2)
 			text += "${it.title}\n"; lev++
 		}
 		text += "\n" + content
@@ -43,6 +44,7 @@ class SectionBuilder {
 	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
 	Str					fanUrl
 	Uri					webUrl
+	Str					what
 	Str					pod
 	Str?				type
 	Str					title
@@ -55,6 +57,7 @@ class SectionBuilder {
 	Section?			section
 	
 	new makePod(DocPod pod) {
+		this.what		= "Pod"
 		this.pod		= pod.name
 		this.title		= pod.name
 		this.fandoc		= pod.summary
@@ -64,6 +67,7 @@ class SectionBuilder {
 	}
 	
 	new makeType(DocType type) {
+		this.what		= "Type"
 		this.pod		= type.pod.name
 		this.type		= type.name
 		this.title		= type.name
@@ -75,6 +79,7 @@ class SectionBuilder {
 	}
 	
 	new makeSlot(DocSlot slot) {
+		this.what		= "Slot"
 		this.pod		= slot.parent.pod
 		this.type		= slot.parent.name
 		this.title		= slot.name
@@ -86,27 +91,42 @@ class SectionBuilder {
 		
 		field := slot as DocField
 		if (field != null) {
+			this.what = "Field"
 			if (field.init != null)
 				title += " := ${field.init}"
 		}
 
 		method := slot as DocMethod
 		if (method != null) {
+			this.what = "Method"
 			title += "(" + method.params.join(", ") { it.toStr } + ")"
 		}
 	}
 	
 	new makeChapter(Str pod, Str type) {
-		this.pod		= pod
-		this.type		= type
-		this.title		= type
-		this.fanUrl		= "${pod}::${type}"
-		this.webUrl		= webBaseUrl + `${pod}/${type}`
-		this.content	= DocNode[,]
-		this.keywords	= type.toDisplayName.split.map { stem(it) }
+		this.what 			= "Documentation"
+		if (type == "pod") {
+			this.pod		= pod
+			this.type		= "pod-doc"
+			this.title		= "pod-doc"
+			this.fanUrl		= "${pod}::index"
+			this.webUrl		= webBaseUrl + `${pod}/index`
+			this.content	= DocNode[,]
+			this.keywords	= [pod]
+			
+		} else {
+			this.pod		= pod
+			this.type		= type
+			this.title		= type
+			this.fanUrl		= "${pod}::${type}"
+			this.webUrl		= webBaseUrl + `${pod}/${type}`
+			this.content	= DocNode[,]
+			this.keywords	= type.toDisplayName.split.map { stem(it) }
+		}
 	}
 
 	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview) {
+		this.what 		= "Documentation"
 		this.pod		= pod
 		this.type		= type
 		this.heading 	= heading
@@ -161,6 +181,7 @@ class SectionBuilder {
 		}
 
 		return section = Section {
+			it.what		= this.what
 			it.pod		= this.pod
 			it.type		= this.type
 			it.title	= this.title

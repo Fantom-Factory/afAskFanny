@@ -2,7 +2,6 @@ using fandoc
 using compilerDoc
 
 const class Index {
-	
 	internal const Str:Section[]	sections
 	
 	new make(|This| f) { f(this) }
@@ -11,7 +10,7 @@ const class Index {
 		if (keyword.contains(" "))
 			throw ArgErr("Keywords can not contain whitespace! $keyword")
 		
-		secs	:= (Section[]) (sections[keyword] ?: Section[,])		
+		secs	:= (Section[]) (sections[keyword] ?: Section[,]).rw		
 		stemmed := SectionBuilder.stem(keyword)
 		if (stemmed != keyword)
 			secs.addAll(sections[stemmed] ?: Section#.emptyList)
@@ -38,6 +37,11 @@ class IndexBuilder {
 		}
 	}
 
+	This indexAll() {
+		Env.cur.findAllPodNames.each { indexPod(it) }
+		return this
+	}
+	
 	This indexPod(Str podName) {
 		podFile := Env.cur.findPodFile(podName)
 		docPod	:= DocPod.load(docEnv, podFile)
@@ -67,7 +71,6 @@ class IndexBuilder {
 			sections.addAll(secs.map { it.toSection })
 		}
 	}
-
 	
 	private Void indexDocs(Str podName, SectionBuilder podSec) {
 		podFile := Env.cur.findPodFile(podName)
