@@ -1,3 +1,4 @@
+using fandoc
 
 const class Section {
 	const Str[]		keywords
@@ -41,7 +42,7 @@ const class Section {
 	}
 	
 	// TODO proper stemming!
-	private Str stem(Str word) {
+	static Str stem(Str word) {
 		// classes -> class, closures -> closure!!!??
 		if (word.endsWith("ses"))
 			word = word[0..<-2]
@@ -78,3 +79,82 @@ const class Section {
 		fanUrl
 	}
 }
+
+class SectionBuilder {
+	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
+	Str					fanUrl
+	Uri					webUrl
+	Str					pod
+	Str?				type
+	Version?			chapter
+	Heading? 			heading
+	DocNode[]			content		:= DocNode[,]	
+	SectionBuilder[]	parents		:= SectionBuilder[,]
+	Section?			section
+	
+	new makePod(Str pod) {
+		this.pod		= pod
+		this.fanUrl		= "${pod}::index"
+		this.webUrl		= webBaseUrl + `${pod}/index`
+	}
+	
+	new makeType(Str pod, Str type) {
+		this.pod		= pod
+		this.type		= type
+		this.fanUrl		= "${pod}::${type}"
+		this.webUrl		= webBaseUrl + `${pod}/${type}`
+	}
+
+	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
+		this.pod		= pod
+		this.type		= type
+		this.heading 	= heading
+		this.fanUrl		= "${pod}::${type}#${heading.anchorId}"
+		this.webUrl		= webBaseUrl + `${pod}/${type}#${heading.anchorId}`
+
+		levs := Int[1]
+		lev  := heading.level
+
+		bobs.eachr |sec| {
+			if (sec.heading.level == lev)
+				levs.push(levs.pop.increment)
+			if (sec.heading.level < lev) {
+				levs.push(1)
+				lev = sec.heading.level
+				parents.push(sec)
+			}
+		}
+		chapter = Version(levs.reverse)
+	}
+	
+	Void addContent(DocNode node) {
+		content.add(node)
+	}
+	
+	Section toSection() {
+		buf := Buf()
+		out := FandocDocWriter(buf.out)
+		content.each { it.write(out) }
+		fandoc := buf.flip.readAllStr
+
+		return section = Section {
+			it.pod		= this.pod
+			it.type		= this.type
+			it.chapter	= this.chapter
+			it.heading	= this.heading?.title
+			it.anchorId	= this.heading?.anchorId
+			it.content	= fandoc
+			it.fanUrl	= this.fanUrl
+			it.webUrl	= this.webUrl
+			it.parents	= this.parents.map { it.section }.exclude { it == null }
+			
+			if (it.parents.isEmpty)
+				it.parents = Section#.emptyList
+		}
+	}
+	
+	override Str toStr() {
+		"${pod}::${type}#${this.heading?.anchorId}"
+	}
+}
+
