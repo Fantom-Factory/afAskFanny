@@ -18,13 +18,24 @@ internal class TestIndexing : Test {
 		
 		
 		pods := index.tellMeAbout("pod")
-		sec  := pods.first
+		sec  := pods[0]
+		verifyEq(sec.pod, "docLang")
+		verifyEq(sec.type, "Pods")
+		verifyEq(sec.heading, null)
+		verifyEq(sec.anchorId, null)
+		verifyEq(sec.chapter, null)
+		// check that Overview content is merged with parent
+		verifyEq(sec.content.startsWith("Pods are the top of Fantom's namespace as well as the unit of deployment."), true)
+
+		sec  = pods[1]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Structure")
 		verifyEq(sec.heading, "Pods")
 		verifyEq(sec.anchorId, "pods")
-		verifyEq(sec.chapter, Version([2]))
+		verifyEq(sec.chapter, Version("1"))
 
+		
+		
 		safe := index.tellMeAbout("safe")
 		sec  = safe.first
 		verifyEq(sec.pod, "docLang")
