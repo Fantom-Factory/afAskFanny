@@ -106,7 +106,7 @@ class SectionBuilder {
 		this.keywords	= type.toDisplayName.split.map { stem(it) }
 	}
 
-	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
+	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview) {
 		this.pod		= pod
 		this.type		= type
 		this.heading 	= heading
@@ -125,6 +125,10 @@ class SectionBuilder {
 				parents.push(sec)
 			}
 		}
+		// cater for missing out 'Overview' sections
+		if (overview)
+			levs.push(levs.pop.increment)
+		
 		chapter := Version(levs.reverse)		
 		this.title = "${chapter}. ${heading.title}"
 

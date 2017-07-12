@@ -33,7 +33,6 @@ class IndexBuilder {
 		keywords.each |keyword| {
 			sections[keyword] = this.sections.findAll { it.containsKeyword(keyword) }
 		}
-		echo(keywords)
 		return Index {
 			it.sections = sections 
 		}
@@ -47,6 +46,11 @@ class IndexBuilder {
 
 		indexDocs(podName, podSec)
 		indexTypes(docPod, podSec)
+		return this
+	}
+
+	This indexFandoc(Str pod, Str type, InStream in) {
+		doIndexFandoc(pod, type, in, null).map { it.toSection }
 		return this
 	}
 
@@ -70,27 +74,26 @@ class IndexBuilder {
 		Zip.open(podFile).contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.each |File fandocFile| {
 			typeSec  := SectionBuilder.makeChapter(podName, fandocFile.basename) { it.parents.push(podSec) }
 
-			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
+			secs := doIndexFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
 			secs.each { it.parents.push(typeSec).push(podSec) }
 
 			sections.add(typeSec.toSection)
 			sections.addAll(secs.map { it.toSection })
 		}
-	}
-
-	Section[] readFandoc(Str pod, Str type, InStream in) {
-		doReadFandoc(pod, type, in, null).map { it.toSection }
 	}	
 
-	private SectionBuilder[] doReadFandoc(Str pod, Str type, InStream in, SectionBuilder? parent) {
+	private SectionBuilder[] doIndexFandoc(Str pod, Str type, InStream in, SectionBuilder? parent) {
 		doc := FandocParser().parse("${pod}::${type}", in, true)
 		
+		overview := false
 		bobs := SectionBuilder[,]
 		// for now, ignore headings that are buried in lists
 		doc.children.each |elem| {
 			if (elem is Heading) {
-				if (parent == null || bobs.size > 0 || (elem as Heading).title != "Overview")
-					bobs.add(SectionBuilder.makeDoc(pod, type, elem, bobs))
+				if (parent != null && bobs.isEmpty && (elem as Heading).title == "Overview")
+					overview = true
+				else
+					bobs.add(SectionBuilder.makeDoc(pod, type, elem, bobs, overview))
 				
 			} else {
 				// ? 'cos not all fandocs start with a heading!
