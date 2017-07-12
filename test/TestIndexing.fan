@@ -41,6 +41,12 @@ internal class TestIndexing : Test {
 		sec  = pods[3]
 		verifyEq(sec.pod, "sys")
 		verifyEq(sec.type, "Pod")
+		verifyEq(sec.title, "Pod")
+
+		sec  = pods[4]
+		verifyEq(sec.pod, "sys")
+		verifyEq(sec.type, "Type")
+		verifyEq(sec.title, "pod()")
 
 		
 		

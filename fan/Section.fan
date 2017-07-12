@@ -74,6 +74,28 @@ class SectionBuilder {
 		this.isApi		= true
 	}
 	
+	new makeSlot(DocSlot slot) {
+		this.pod		= slot.parent.pod
+		this.type		= slot.parent.name
+		this.title		= slot.name
+		this.fanUrl		= "${this.pod}::${this.type}.${slot.name}"
+		this.webUrl		= webBaseUrl + `${this.pod}/${this.type}#${slot.name}`
+		this.fandoc		= slot.doc.text
+		this.keywords	= [slot.name]
+		this.isApi		= true
+		
+		field := slot as DocField
+		if (field != null) {
+			if (field.init != null)
+				title += " := ${field.init}"
+		}
+
+		method := slot as DocMethod
+		if (method != null) {
+			title += "(" + method.params.join(", ") { it.toStr } + ")"
+		}
+	}
+	
 	new makeChapter(Str pod, Str type) {
 		this.pod		= pod
 		this.type		= type
