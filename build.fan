@@ -9,6 +9,7 @@ class Build : BuildPod {
 		depends = [
 			"sys          1.0.69 - 1.0",
 			"fandoc       1.0.69 - 1.0",
+			"compilerDoc  1.0.69 - 1.0",
 
 			"docLang      1.0.69 - 1.0",
 		]
