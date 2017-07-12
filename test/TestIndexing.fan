@@ -17,29 +17,41 @@ internal class TestIndexing : Test {
 		tellMeAbout("safe") //-> 2.6
 		
 		
-		secs := index.tellMeAbout("pod")
-		sec := secs.first
+		pods := index.tellMeAbout("pod")
+		sec  := pods.first
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Structure")
 		verifyEq(sec.heading, "Pods")
 		verifyEq(sec.anchorId, "pods")
 		verifyEq(sec.chapter, Version([2]))
 
-		secs = index.tellMeAbout("safe")
-		sec  = secs.first.parents.first
-		verifyEq(sec.pod, "docLang")
-		verifyEq(sec.type, "Expressions")
-		verifyEq(sec.heading, "Null Convenience Operators")
-		verifyEq(sec.anchorId, "nullConvenience")
-		verifyEq(sec.chapter, Version("6"))
-		sec  = secs.first
+		safe := index.tellMeAbout("safe")
+		sec  = safe.first
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.heading, "Safe Invoke")
 		verifyEq(sec.anchorId, "safeInvoke")
 		verifyEq(sec.chapter, Version("6.2"))
+		verifyEq(sec.parents[0].title, "6. Null Convenience Operators")
+		verifyEq(sec.parents[1].title, "Expressions")
+		verifyEq(sec.parents[2].title, "docLang")
 		
+		sec  = safe.first.parents[0]
+		verifyEq(sec.pod, "docLang")
+		verifyEq(sec.type, "Expressions")
+		verifyEq(sec.heading, "Null Convenience Operators")
+		verifyEq(sec.anchorId, "nullConvenience")
+		verifyEq(sec.chapter, Version("6"))
+		verifyEq(sec.parents[0].title, "Expressions")
+		verifyEq(sec.parents[1].title, "docLang")
 		
+		sec  = safe.first.parents[1]
+		verifyEq(sec.pod, "docLang")
+		verifyEq(sec.type, "Expressions")
+		verifyEq(sec.heading, null)
+		verifyEq(sec.anchorId, null)
+		verifyEq(sec.chapter, null)
+		verifyEq(sec.parents[0].title, "docLang")
 		
 	}
 	
