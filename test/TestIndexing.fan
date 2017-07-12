@@ -32,6 +32,16 @@ internal class TestIndexing : Test {
 		verifyEq(sec.title, "1. Pods")
 		verifyEq(sec.webUrl.frag, "pods")
 
+		sec  = pods[2]
+		verifyEq(sec.pod, "docLang")
+		verifyEq(sec.type, "Pods")
+		verifyEq(sec.title, "1. Pod Meta")
+		verifyEq(sec.webUrl.frag, "meta")
+
+		sec  = pods[3]
+		verifyEq(sec.pod, "sys")
+		verifyEq(sec.type, "Pod")
+
 		
 		
 		safe := index.tellMeAbout("safe")

@@ -16,7 +16,7 @@ const class Index {
 		if (stemmed != keyword)
 			secs.addAll(sections[stemmed] ?: Section#.emptyList)
 
-		sortScore := |Section s->Int| { (s.parents.size * 2) + s.keywords.size }
+		sortScore := |Section s->Int| { (s.parents.size * 2) + s.keywords.size + (s.isApi ? 10 : 0) }
 		secs = secs.rw.sort |s1, s2| { sortScore(s1) <=> sortScore(s2) }
 		return secs
 	}	
@@ -53,12 +53,12 @@ class IndexBuilder {
 	private Void indexTypes(DocPod docPod, SectionBuilder podSec) {
 		
 		docPod.types.each |DocType type| {
-//			typeSec  := SectionBuilder.makeType(docPod.name, type.name) { it.parents.push(podSec) }
+			typeSec  := SectionBuilder.makeType(type) { it.parents.push(podSec) }
 
 //			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
 //			secs.each { it.parents.push(typeSec).push(podSec) }
 //
-//			sections.add(typeSec.toSection)
+			sections.add(typeSec.toSection)
 //			sections.addAll(secs.map { it.toSection })
 		}
 		
