@@ -10,29 +10,37 @@ class DocReader {
 		podFile := Env.cur.findPodFile(podName)
 		Zip.open(podFile).contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.each |File fandocFile| {
 			typeSec  := SectionBuilder(podName, fandocFile.basename) { it.parents.push(podSec) }
-			sections.add(typeSec.toSection)
 
-			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in)
+			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
 			secs.each { it.parents.push(typeSec).push(podSec) }
+
+			sections.add(typeSec.toSection)
 			sections.addAll(secs.map { it.toSection })
 		}
 		return sections
 	}
 
 	Section[] readFandoc(Str pod, Str type, InStream in) {
-		doReadFandoc(pod, type, in).map { it.toSection }
+		doReadFandoc(pod, type, in, null).map { it.toSection }
 	}	
 
-	private SectionBuilder[] doReadFandoc(Str pod, Str type, InStream in) {
+	private SectionBuilder[] doReadFandoc(Str pod, Str type, InStream in, SectionBuilder? parent) {
 		doc := FandocParser().parse("${pod}::${type}", in, true)
 		
 		bobs := SectionBuilder[,]
 		// for now, ignore headings that are buried in lists
 		doc.children.each |elem| {
-			if (elem is Heading)
-				bobs.add(SectionBuilder(pod, type, elem, bobs))
-			else
-				bobs.last?.addContent(elem)	// ? 'cos not all fandocs start with a heading!
+			if (elem is Heading) {
+				if (parent == null || bobs.size > 0 || (elem as Heading).title != "Overview")
+					bobs.add(SectionBuilder(pod, type, elem, bobs))
+				
+			} else {
+				// ? 'cos not all fandocs start with a heading!
+				if (bobs.isEmpty)
+					parent?.addContent(elem)
+				else
+					bobs.last.addContent(elem)
+			}
 		}
 		return bobs
 	}	

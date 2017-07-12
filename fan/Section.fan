@@ -16,12 +16,15 @@ const class Section {
 		f(this)
 		
 		// TODO add acronyms
+		keys := null as Str[]
 		if (type == null)
-			keywords = [pod.lower]
+			keys = [pod]
 		else if (heading == null)
-			keywords = [type.lower]
+			keys = [type]
 		else
-			keywords = heading.toDisplayName.lower.split.map { stem(it) }
+			keys = heading.toDisplayName.split
+		
+		keywords = keys.map { stem(it.lower) }
 				.exclude |Str key->Bool| { key.size < 2 || key.endsWith("-") }	// remove nonsense
 				.exclude |Str key->Bool| { ["and", "or", "the"].contains(key) }	// remove stopwords
 		
@@ -39,8 +42,8 @@ const class Section {
 	
 	// TODO proper stemming!
 	private Str stem(Str word) {
-		// classes -> class, closures -> closur!!!??
-		if (word.endsWith("es"))
+		// classes -> class, closures -> closure!!!??
+		if (word.endsWith("ses"))
 			word = word[0..<-2]
 		// pods -> pod, this -> this, class -> class
 		if (word.endsWith("s") && !word.endsWith("is") && !word.endsWith("ss"))
