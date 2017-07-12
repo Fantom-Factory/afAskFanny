@@ -6,6 +6,8 @@ const class Section {
 	const Str?		type
 	const Str		title
 	const Str		content
+	const Bool		isApi
+	const Bool		isDoc
 	const Str[]		keywords
 	const Str		fanUrl
 	const Uri		webUrl
@@ -45,6 +47,7 @@ class SectionBuilder {
 	Str?				type
 	Str					title
 	Str?				fandoc
+	Bool				isApi
 	Str[]				keywords
 	Heading? 			heading
 	DocNode[]?			content
@@ -60,6 +63,17 @@ class SectionBuilder {
 		this.keywords	= [pod.name]
 	}
 	
+	new makeType(DocType type) {
+		this.pod		= type.pod.name
+		this.type		= type.name
+		this.title		= type.name
+		this.fanUrl		= "${this.pod}::${this.type}"
+		this.webUrl		= webBaseUrl + `${this.pod}/${this.type}`
+		this.fandoc		= type.doc.text
+		this.keywords	= [type.name]
+		this.isApi		= true
+	}
+	
 	new makeChapter(Str pod, Str type) {
 		this.pod		= pod
 		this.type		= type
@@ -67,7 +81,7 @@ class SectionBuilder {
 		this.fanUrl		= "${pod}::${type}"
 		this.webUrl		= webBaseUrl + `${pod}/${type}`
 		this.content	= DocNode[,]
-		this.keywords	= type.toDisplayName.split.map { stem(it.lower) }
+		this.keywords	= type.toDisplayName.split.map { stem(it) }
 	}
 
 	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
@@ -92,7 +106,7 @@ class SectionBuilder {
 		chapter := Version(levs.reverse)		
 		this.title = "${chapter}. ${heading.title}"
 
-		this.keywords = heading.title.toDisplayName.split.map { stem(it.lower) }
+		this.keywords = heading.title.toDisplayName.split.map { stem(it) }
 			.exclude |Str key->Bool| { key.size < 2 || key.endsWith("-") }	// remove nonsense
 			.exclude |Str key->Bool| { ["and", "or", "the"].contains(key) }	// remove stopwords
 	}
@@ -124,6 +138,8 @@ class SectionBuilder {
 			it.pod		= this.pod
 			it.type		= this.type
 			it.title	= this.title
+			it.isApi	= this.isApi
+			it.isDoc	= this.isApi.not
 			it.keywords	= this.keywords
 			it.content	= fandoc
 			it.fanUrl	= this.fanUrl
