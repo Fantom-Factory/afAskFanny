@@ -30,8 +30,7 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Structure")
 		verifyEq(sec.title, "1. Pods")
-		verifyEq(sec.heading, "Pods")
-		verifyEq(sec.anchorId, "pods")
+		verifyEq(sec.webUrl.frag, "pods")
 
 		
 		
@@ -40,8 +39,7 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "6.2. Safe Invoke")
-		verifyEq(sec.heading, "Safe Invoke")
-		verifyEq(sec.anchorId, "safeInvoke")
+		verifyEq(sec.webUrl.frag, "safeInvoke")
 		verifyEq(sec.parents[0].title, "6. Null Convenience Operators")
 		verifyEq(sec.parents[1].title, "Expressions")
 		verifyEq(sec.parents[2].title, "docLang")
@@ -50,8 +48,7 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "6. Null Convenience Operators")
-		verifyEq(sec.heading, "Null Convenience Operators")
-		verifyEq(sec.anchorId, "nullConvenience")
+		verifyEq(sec.webUrl.frag, "nullConvenience")
 		verifyEq(sec.parents[0].title, "Expressions")
 		verifyEq(sec.parents[1].title, "docLang")
 		
@@ -59,8 +56,6 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "Expressions")
-		verifyEq(sec.heading, null)
-		verifyEq(sec.anchorId, null)
 		verifyEq(sec.parents[0].title, "docLang")
 	}
 	
