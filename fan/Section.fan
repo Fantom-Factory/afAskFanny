@@ -1,10 +1,10 @@
 using fandoc
+using compilerDoc
 
 const class Section {
 	const Str[]		keywords
 	const Str		pod
 	const Str?		type
-	const Version?	chapter
 	const Str?		heading
 	const Str?		anchorId
 	const Str		content
@@ -28,17 +28,6 @@ const class Section {
 		keywords = keys.map { stem(it.lower) }
 				.exclude |Str key->Bool| { key.size < 2 || key.endsWith("-") }	// remove nonsense
 				.exclude |Str key->Bool| { ["and", "or", "the"].contains(key) }	// remove stopwords
-		
-		if (type == null)
-			title = pod
-		else if (heading == null)
-			title = type
-		else {
-			if (chapter == null)
-				title = heading
-			else
-				title = "${chapter}. ${heading}"
-		}
 	}
 	
 	// TODO proper stemming!
@@ -86,23 +75,28 @@ class SectionBuilder {
 	Uri					webUrl
 	Str					pod
 	Str?				type
-	Version?			chapter
+	Str					title
+	Str?				fandoc
 	Heading? 			heading
-	DocNode[]			content		:= DocNode[,]	
+	DocNode[]?			content
 	SectionBuilder[]	parents		:= SectionBuilder[,]
 	Section?			section
 	
-	new makePod(Str pod) {
-		this.pod		= pod
-		this.fanUrl		= "${pod}::index"
-		this.webUrl		= webBaseUrl + `${pod}/index`
+	new makePod(DocPod pod) {
+		this.pod		= pod.name
+		this.title		= pod.name
+		this.fandoc		= pod.summary
+		this.fanUrl		= "${pod.name}::index"
+		this.webUrl		= webBaseUrl + `${pod.name}/index`
 	}
 	
-	new makeType(Str pod, Str type) {
+	new makeChapter(Str pod, Str type) {
 		this.pod		= pod
 		this.type		= type
+		this.title		= type
 		this.fanUrl		= "${pod}::${type}"
 		this.webUrl		= webBaseUrl + `${pod}/${type}`
+		this.content	= DocNode[,]
 	}
 
 	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
@@ -111,10 +105,10 @@ class SectionBuilder {
 		this.heading 	= heading
 		this.fanUrl		= "${pod}::${type}#${heading.anchorId}"
 		this.webUrl		= webBaseUrl + `${pod}/${type}#${heading.anchorId}`
+		this.content	= DocNode[,]
 
 		levs := Int[1]
 		lev  := heading.level
-
 		bobs.eachr |sec| {
 			if (sec.heading.level == lev)
 				levs.push(levs.pop.increment)
@@ -124,7 +118,9 @@ class SectionBuilder {
 				parents.push(sec)
 			}
 		}
-		chapter = Version(levs.reverse)
+		chapter := Version(levs.reverse)
+		
+		this.title = "${chapter}. ${heading.title}"
 	}
 	
 	Void addContent(DocNode node) {
@@ -132,15 +128,17 @@ class SectionBuilder {
 	}
 	
 	Section toSection() {
-		buf := Buf()
-		out := FandocDocWriter(buf.out)
-		content.each { it.write(out) }
-		fandoc := buf.flip.readAllStr
+		if (fandoc == null) {
+			buf := Buf()
+			out := FandocDocWriter(buf.out)
+			content.each { it.write(out) }
+			fandoc = buf.flip.readAllStr
+		}
 
 		return section = Section {
 			it.pod		= this.pod
 			it.type		= this.type
-			it.chapter	= this.chapter
+			it.title	= this.title
 			it.heading	= this.heading?.title
 			it.anchorId	= this.heading?.anchorId
 			it.content	= fandoc
@@ -153,8 +151,6 @@ class SectionBuilder {
 		}
 	}
 	
-	override Str toStr() {
-		"${pod}::${type}#${this.heading?.anchorId}"
-	}
+	override Str toStr() { fanUrl }
 }
 

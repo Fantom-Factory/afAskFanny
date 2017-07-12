@@ -6,7 +6,8 @@ internal class TestIndexing : Test {
 	Void testStuff() {
 		
 		index = IndexBuilder()
-			.indexDocPod("docLang")
+			.indexPod("docLang")
+			.indexPod("sys")
 			.buildIndex
 		
 		
@@ -21,18 +22,16 @@ internal class TestIndexing : Test {
 		sec  := pods[0]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Pods")
-		verifyEq(sec.heading, null)
-		verifyEq(sec.anchorId, null)
-		verifyEq(sec.chapter, null)
+		verifyEq(sec.title, "Pods")
 		// check that Overview content is merged with parent
 		verifyEq(sec.content.startsWith("Pods are the top of Fantom's namespace as well as the unit of deployment."), true)
 
 		sec  = pods[1]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Structure")
+		verifyEq(sec.title, "1. Pods")
 		verifyEq(sec.heading, "Pods")
 		verifyEq(sec.anchorId, "pods")
-		verifyEq(sec.chapter, Version("1"))
 
 		
 		
@@ -40,9 +39,9 @@ internal class TestIndexing : Test {
 		sec  = safe.first
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
+		verifyEq(sec.title, "6.2. Safe Invoke")
 		verifyEq(sec.heading, "Safe Invoke")
 		verifyEq(sec.anchorId, "safeInvoke")
-		verifyEq(sec.chapter, Version("6.2"))
 		verifyEq(sec.parents[0].title, "6. Null Convenience Operators")
 		verifyEq(sec.parents[1].title, "Expressions")
 		verifyEq(sec.parents[2].title, "docLang")
@@ -50,20 +49,19 @@ internal class TestIndexing : Test {
 		sec  = safe.first.parents[0]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
+		verifyEq(sec.title, "6. Null Convenience Operators")
 		verifyEq(sec.heading, "Null Convenience Operators")
 		verifyEq(sec.anchorId, "nullConvenience")
-		verifyEq(sec.chapter, Version("6"))
 		verifyEq(sec.parents[0].title, "Expressions")
 		verifyEq(sec.parents[1].title, "docLang")
 		
 		sec  = safe.first.parents[1]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
+		verifyEq(sec.title, "Expressions")
 		verifyEq(sec.heading, null)
 		verifyEq(sec.anchorId, null)
-		verifyEq(sec.chapter, null)
 		verifyEq(sec.parents[0].title, "docLang")
-		
 	}
 	
 	Void tellMeAbout(Str keyword) {
