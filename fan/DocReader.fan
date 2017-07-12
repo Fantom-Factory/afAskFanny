@@ -5,49 +5,71 @@ class DocReader {
 
 	Section[] readDocPod(Str podName) {
 		sections := Section[,]
+		podSec	:= SectionBuilder(podName)
+		sections.add(podSec.toSection)
 		podFile := Env.cur.findPodFile(podName)
 		Zip.open(podFile).contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.each |File fandocFile| {
-			
-			sections.addAll(readFandoc(podName, fandocFile.basename, fandocFile.in))
+			typeSec  := SectionBuilder(podName, fandocFile.basename) { it.parents.push(podSec) }
+			sections.add(typeSec.toSection)
+
+			secs := doReadFandoc(podName, fandocFile.basename, fandocFile.in)
+			secs.each { it.parents.push(typeSec).push(podSec) }
+			sections.addAll(secs.map { it.toSection })
 		}
 		return sections
 	}
 
 	Section[] readFandoc(Str pod, Str type, InStream in) {
+		doReadFandoc(pod, type, in).map { it.toSection }
+	}	
+
+	private SectionBuilder[] doReadFandoc(Str pod, Str type, InStream in) {
 		doc := FandocParser().parse("${pod}::${type}", in, true)
 		
-		// for now, ignore headings that are buried in lists
 		bobs := SectionBuilder[,]
+		// for now, ignore headings that are buried in lists
 		doc.children.each |elem| {
 			if (elem is Heading)
 				bobs.add(SectionBuilder(pod, type, elem, bobs))
 			else
 				bobs.last?.addContent(elem)	// ? 'cos not all fandocs start with a heading!
 		}
-		return bobs.map { it.toSection }
+		return bobs
 	}	
 }
 
 class SectionBuilder {
-	Heading 	heading
-	DocNode[]	content		:= DocNode[,]
+	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
+	Str					fanUrl
+	Uri					webUrl
+	Str					pod
+	Str?				type
+	Version?			chapter
+	Heading? 			heading
+	DocNode[]			content		:= DocNode[,]	
+	SectionBuilder[]	parents		:= SectionBuilder[,]
+	Section?			section
 	
-	Str			id
-	Str			pod
-	Str			type
-	Str			fandocUrl
-	Version		chapter
-	SectionBuilder[]	parents
-	Section?	section
+	new makePod(Str pod) {
+		this.pod		= pod
+		this.fanUrl		= "${pod}::index"
+		this.webUrl		= webBaseUrl + `${pod}/index`
+	}
 	
-	new make(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
-		this.id			= genShortId
+	new makeType(Str pod, Str type) {
 		this.pod		= pod
 		this.type		= type
-		this.fandocUrl	= "${pod}::${type}"
+		this.fanUrl		= "${pod}::${type}"
+		this.webUrl		= webBaseUrl + `${pod}/${type}`
+	}
+
+	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs) {
+		this.pod		= pod
+		this.type		= type
 		this.heading 	= heading
-		this.parents	= SectionBuilder[,]
-		
+		this.fanUrl		= "${pod}::${type}#${heading.anchorId}"
+		this.webUrl		= webBaseUrl + `${pod}/${type}#${heading.anchorId}`
+
 		levs := Int[1]
 		lev  := heading.level
 
@@ -67,41 +89,29 @@ class SectionBuilder {
 		content.add(node)
 	}
 	
-	private static const AtomicInt lastTimeRef := AtomicInt(0)
-	static Str genShortId() {
-		time := DateTime.nowTicks / 1sec.ticks
-		
-		// try to keep spurts of activities in order
-		if (time <= lastTimeRef.val)
-			time = lastTimeRef.incrementAndGet
-		lastTimeRef.val = time
-		
-		// 2.pow(32) / 60 sec / 60 min / 24 hour / 365 day == 136 years --> and no one will over need more than 48K of RAM
-		time = time.and(0xffff_ffff)
-
-		rand := Int.random.and(0xffff_ffff)
-		return StrBuf(20).add(time.toHex(8)).addChar('-').add(rand.toHex(8)).toStr
-	}
-	
-	Section? toSection() {
+	Section toSection() {
 		buf := Buf()
 		out := FandocDocWriter(buf.out)
 		content.each { it.write(out) }
 		fandoc := buf.flip.readAllStr
-		
+
 		return section = Section {
-			it.id		= this.id
-			it.pod		= this.fandocUrl[0..<this.fandocUrl.index(":")]
-			it.type		= this.fandocUrl[this.fandocUrl.index(":")+2..-1]
+			it.pod		= this.pod
+			it.type		= this.type
 			it.chapter	= this.chapter
-			it.heading	= this.heading.title
-			it.anchorId	= this.heading.anchorId
+			it.heading	= this.heading?.title
+			it.anchorId	= this.heading?.anchorId
 			it.content	= fandoc
-			it.fandocUrl = this.fandocUrl
-			it.fantomUrl = `http://fantom.org/doc/${it.pod}/${it.type}#${it.anchorId}`
-			it.parents	= this.parents.isEmpty ? Str#.emptyList : this.parents.map { it.section }
+			it.fanUrl	= this.fanUrl
+			it.webUrl	= this.webUrl
+			it.parents	= this.parents.map { it.section }.exclude { it == null }
+			
+			if (it.parents.isEmpty)
+				it.parents = Section#.emptyList
 		}
 	}
+	
+	override Str toStr() {
+		"${pod}::${type}#${this.heading?.anchorId}"
+	}
 }
-
-
