@@ -4,7 +4,6 @@ using compilerDoc
 internal class SectionBuilder {
 	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
 	Str					fanUrl
-	Uri					webUrl
 	Str					what
 	Str					pod
 	Str?				type
@@ -23,7 +22,6 @@ internal class SectionBuilder {
 		this.title		= pod.name
 		this.fandoc		= pod.summary
 		this.fanUrl		= "${pod.name}::index"
-		this.webUrl		= webBaseUrl + `${pod.name}/index`
 		this.keywords	= [pod.name]
 	}
 	
@@ -31,9 +29,8 @@ internal class SectionBuilder {
 		this.what		= "Type"
 		this.pod		= type.pod.name
 		this.type		= type.name
-		this.title		= type.name
+		this.title		= type.qname
 		this.fanUrl		= "${this.pod}::${this.type}"
-		this.webUrl		= webBaseUrl + `${this.pod}/${this.type}`
 		this.fandoc		= type.doc.text
 		this.keywords	= [type.name]
 		this.isApi		= true
@@ -43,9 +40,8 @@ internal class SectionBuilder {
 		this.what		= "Slot"
 		this.pod		= slot.parent.pod
 		this.type		= slot.parent.name
-		this.title		= slot.name
+		this.title		= slot.qname
 		this.fanUrl		= "${this.pod}::${this.type}.${slot.name}"
-		this.webUrl		= webBaseUrl + `${this.pod}/${this.type}#${slot.name}`
 		this.fandoc		= slot.doc.text
 		this.keywords	= [slot.name]
 		this.isApi		= true
@@ -71,7 +67,6 @@ internal class SectionBuilder {
 			this.type		= "pod-doc"
 			this.title		= "pod-doc"
 			this.fanUrl		= "${pod}::index"
-			this.webUrl		= webBaseUrl + `${pod}/index`
 			this.content	= DocNode[,]
 			this.keywords	= [pod]
 			
@@ -80,7 +75,6 @@ internal class SectionBuilder {
 			this.type		= type
 			this.title		= type
 			this.fanUrl		= "${pod}::${type}"
-			this.webUrl		= webBaseUrl + `${pod}/${type}`
 			this.content	= DocNode[,]
 			this.keywords	= type.toDisplayName.split.map { stem(it) }
 		}
@@ -92,7 +86,6 @@ internal class SectionBuilder {
 		this.type		= type
 		this.heading 	= heading
 		this.fanUrl		= "${pod}::${type}#${heading.anchorId}"
-		this.webUrl		= webBaseUrl + `${pod}/${type}#${heading.anchorId}`
 		this.content	= DocNode[,]
 
 		levs := Int[1]
@@ -151,7 +144,6 @@ internal class SectionBuilder {
 			it.keywords	= this.keywords
 			it.content	= fandoc
 			it.fanUrl	= this.fanUrl
-			it.webUrl	= this.webUrl
 			it.parents	= this.parents.map { it.section }.exclude { it == null }
 		}
 	}
