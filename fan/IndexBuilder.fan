@@ -2,7 +2,8 @@ using fandoc
 using compilerDoc
 
 class IndexBuilder {
-	private static const Str[] corePodNames := "docIntro docLang docFanr docTools docDomkit build compiler compilerDoc compilerJava compilerJs concurrent dom domkit email fandoc fanr fansh flux fluxText fwt gfx icons inet obix sql syntax sys testCompiler testJava testNative testSys util web webfwt webmod wisp xml".split
+//	private static const Str[] corePodNames := "docIntro docLang docFanr docTools docDomkit build compiler compilerDoc compilerJava compilerJs concurrent dom domkit email fandoc fanr fansh flux fluxText fwt gfx icons inet obix sql syntax sys testCompiler testJava testNative testSys util web webfwt webmod wisp xml".split
+	private static const Str[] corePodNames := "docIntro docLang docTools docDomkit concurrent dom domkit email fandoc fwt gfx inet sys util web webfwt webmod wisp xml".split
 
 	private DocEnv docEnv	:= DefaultDocEnv()
 	Section[]	sections	:= Section[,]
