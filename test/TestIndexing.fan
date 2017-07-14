@@ -8,6 +8,7 @@ internal class TestIndexing : Test {
 		index = IndexBuilder()
 			.indexPod("docLang")
 			.indexPod("sys")
+			.indexPod("fandoc")
 			.build
 		
 		
@@ -30,23 +31,23 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Structure")
 		verifyEq(sec.title, "2. Pods")
-		verifyEq(sec.webUrl.frag, "pods")
+		verifyEq(sec.fanUrl, "docLang::Structure#pods")
 
 		sec  = pods[2]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Pods")
 		verifyEq(sec.title, "2. Pod Meta")
-		verifyEq(sec.webUrl.frag, "meta")
+		verifyEq(sec.fanUrl, "docLang::Pods#meta")
 
 		sec  = pods[3]
 		verifyEq(sec.pod, "sys")
 		verifyEq(sec.type, "Pod")
-		verifyEq(sec.title, "Pod")
+		verifyEq(sec.title, "sys::Pod")
 
 		sec  = pods[4]
 		verifyEq(sec.pod, "sys")
 		verifyEq(sec.type, "Type")
-		verifyEq(sec.title, "pod()")
+		verifyEq(sec.title, "sys::Type.pod()")
 
 		
 		
@@ -55,7 +56,7 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "6.2. Safe Invoke")
-		verifyEq(sec.webUrl.frag, "safeInvoke")
+		verifyEq(sec.fanUrl, "docLang::Expressions#safeInvoke")
 		verifyEq(sec.parents[0].title, "6. Null Convenience Operators")
 		verifyEq(sec.parents[1].title, "Expressions")
 		verifyEq(sec.parents[2].title, "docLang")
@@ -64,7 +65,7 @@ internal class TestIndexing : Test {
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "6. Null Convenience Operators")
-		verifyEq(sec.webUrl.frag, "nullConvenience")
+		verifyEq(sec.fanUrl, "docLang::Expressions#nullConvenience")
 		verifyEq(sec.parents[0].title, "Expressions")
 		verifyEq(sec.parents[1].title, "docLang")
 		
@@ -73,6 +74,28 @@ internal class TestIndexing : Test {
 		verifyEq(sec.type, "Expressions")
 		verifyEq(sec.title, "Expressions")
 		verifyEq(sec.parents[0].title, "docLang")
+		
+		
+		
+		fandoc := index.tellMeAbout("fandoc")
+		sec  = fandoc[0]
+		verifyEq(sec.pod, "fandoc")
+		verifyEq(sec.type, null)
+		verifyEq(sec.title, "fandoc")
+		verifyEq(sec.fanUrl, "fandoc::index#overview")
+		verifyEq(sec.parents.size, 0)
+		// check summary AND overview are picked up
+		verifyEq(sec.content.startsWith("Fandoc parser and DOM\n\nFandoc is documentation format"), true)
+
+		sec  = fandoc[1]
+		verifyEq(sec.pod, "fandoc")
+		verifyEq(sec.type, "index")
+		verifyEq(sec.title, "2.3. Fandoc API")
+		verifyEq(sec.fanUrl, "fandoc::index#api")
+		verifyEq(sec.parents[0].title, "2. Ex Heading 1")
+		verifyEq(sec.parents[1].title, "fandoc")
+		// check summary AND overview are picked up
+		verifyEq(sec.content.startsWith("Fandoc parser and DOM\n\nFandoc is documentation format"), true)
 	}
 	
 	Void tellMeAbout(Str keyword) {

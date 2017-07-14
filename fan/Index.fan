@@ -1,7 +1,5 @@
 
 const class Index {
-	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
-
 	internal const Str:Section[]	sections
 	
 	internal new make(|This| f) { f(this) }

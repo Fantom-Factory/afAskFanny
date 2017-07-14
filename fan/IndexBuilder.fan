@@ -36,10 +36,12 @@ class IndexBuilder {
 
 		docPod	:= DocPod.load(docEnv, podFile)
 		podSec	:= SectionBuilder(docPod)
-		sections.add(podSec.toSection)
 
 		indexDocs(podName, podSec)
 		indexTypes(docPod, podSec)
+		
+		// wait until any Overview sections have been added
+		sections.add(podSec.toSection)
 		return this
 	}
 
@@ -65,12 +67,19 @@ class IndexBuilder {
 	private Void indexDocs(Str podName, SectionBuilder podSec) {
 		podFile := Env.cur.findPodFile(podName)
 		Zip.open(podFile).contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.each |File fandocFile| {
-			typeSec  := SectionBuilder.makeChapter(podName, fandocFile.basename) { it.parents.push(podSec) }
+			typeSec  := fandocFile.name == "pod.fandoc"
+				? podSec
+				: SectionBuilder.makeChapter(podName, fandocFile.basename) { it.parents.push(podSec) }
 
 			secs := doIndexFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
-			secs.each { it.parents.push(typeSec).push(podSec) }
+			secs.each {
+				it.parents.push(typeSec)
+				if (typeSec !== podSec)
+					it.parents.push(podSec)
+			}
 
-			sections.add(typeSec.toSection)
+			if (typeSec != podSec)
+				sections.add(typeSec.toSection)
 			sections.addAll(secs.map { it.toSection })
 		}
 	}	

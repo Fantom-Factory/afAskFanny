@@ -14,7 +14,6 @@ internal class SectionBuilder {
 	Heading? 			heading
 	DocNode[]?			content
 	SectionBuilder[]	parents		:= SectionBuilder[,]
-	Section?			section
 	
 	new makePod(DocPod pod) {
 		this.what		= "Pod"
@@ -60,27 +59,18 @@ internal class SectionBuilder {
 		}
 	}
 	
-	new makeChapter(Str pod, Str type) {
-		this.what 			= "Documentation"
-		if (type == "pod") {
-			this.pod		= pod
-			this.type		= "pod-doc"
-			this.title		= "pod-doc"
-			this.fanUrl		= "${pod}::index"
-			this.content	= DocNode[,]
-			this.keywords	= [pod]
-			
-		} else {
-			this.pod		= pod
-			this.type		= type
-			this.title		= type
-			this.fanUrl		= "${pod}::${type}"
-			this.content	= DocNode[,]
-			this.keywords	= type.toDisplayName.split.map { stem(it) }
-		}
+	new makeChapter(Str pod, Str fileBaseName) {
+		this.what 		= "Documentation"
+		this.pod		= pod
+		this.type		= fileBaseName
+		this.title		= fileBaseName
+		this.fanUrl		= "${pod}::${fileBaseName}"
+		this.content	= DocNode[,]
+		this.keywords	= type.toDisplayName.split.map { stem(it) }
 	}
 
 	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview) {
+		if (type == "pod") type = "index"
 		this.what 		= "Documentation"
 		this.pod		= pod
 		this.type		= type
@@ -123,10 +113,19 @@ internal class SectionBuilder {
 	}
 
 	Void addContent(DocNode node) {
+		// this happens when writing pod.fandoc overviews to pod sections
+		if (content == null) {
+			content = DocNode[,]
+			fanUrl += "#overview"
+			if (fandoc != null) {
+				content = DocNode[ Para().add(DocText(fandoc)) ]
+				fandoc  = null
+			}
+		}
 		content.add(node)
 	}
 	
-	Section toSection() {
+	once Section toSection() {
 		if (fandoc == null) {
 			buf := Buf()
 			out := FandocDocWriter(buf.out)
@@ -134,7 +133,7 @@ internal class SectionBuilder {
 			fandoc = buf.flip.readAllStr
 		}
 
-		return section = Section {
+		return Section {
 			it.what		= this.what
 			it.pod		= this.pod
 			it.type		= this.type
@@ -144,7 +143,7 @@ internal class SectionBuilder {
 			it.keywords	= this.keywords
 			it.content	= fandoc
 			it.fanUrl	= this.fanUrl
-			it.parents	= this.parents.map { it.section }.exclude { it == null }
+			it.parents	= this.parents.map { it.toSection }
 		}
 	}
 	
