@@ -8,7 +8,7 @@ internal class TestIndexing : Test {
 		index = IndexBuilder()
 			.indexPod("docLang")
 			.indexPod("sys")
-			.buildIndex
+			.build
 		
 		
 		
@@ -78,7 +78,7 @@ internal class TestIndexing : Test {
 	Void tellMeAbout(Str keyword) {
 		secs := index.tellMeAbout(keyword)
 		
-		out := secs.join("\n\n" + ("-" * 120)) { it.toPlainText(120) }
+		out := secs.join("\n\n" + ("-" * 80)) { it.toPlainText(80) }
 		echo(out)
 	}
 	

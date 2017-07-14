@@ -1,9 +1,10 @@
 
+@NoDoc
 class Main {
-	Void main() {
-		tellMeAbout := "pods"
+	Void main(Str[] args) {
+		tellMeAbout := args.first
 		
-		index := IndexBuilder().indexAll.buildIndex
+		index := IndexBuilder().indexAllPods.build
 		index.tellMeAbout(tellMeAbout).join("\n\n" + "".padl(120, '-')) { it.toPlainText(120) } { echo(it) }
 	}
 }

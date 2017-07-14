@@ -2,7 +2,7 @@ using build
 
 class Build : BuildPod {
 	new make() {
-		podName = "afTellMe"
+		podName = "afTellMeAbout"
 		summary = "Documentation Index for Fantom"
 		version = Version("0.0.1")
 
@@ -14,7 +14,7 @@ class Build : BuildPod {
 			"docLang      1.0.69 - 1.0",
 		]
 
-		srcDirs = [`fan/`, `test/`]
+		srcDirs = [`fan/`, `fan/internal/`, `test/`]
 		resDirs = [,]
 
 		docApi = true
