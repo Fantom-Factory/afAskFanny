@@ -10,10 +10,15 @@ class Build : BuildPod {
 			"sys          1.0.69 - 1.0",
 			"fandoc       1.0.69 - 1.0",
 			"compilerDoc  1.0.69 - 1.0",
+			
+			// ---- web ----
+			"web          1.0.69 - 1.0",
+			"wisp         1.0.69 - 1.0",
+			"util         1.0.69 - 1.0",
 		]
 
-		srcDirs = [`fan/`, `fan/internal/`, `test/`]
-		resDirs = [,]
+		srcDirs = [`fan/`, `fan/internal/`, `fan/web/`, `test/`]
+		resDirs = [`res/web/`]
 
 		docApi = true
 		docSrc = true
