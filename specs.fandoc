@@ -1,41 +1,131 @@
+Tell Me About ... Fantom Examples
 
 
-Something I noticed when I was learning Fantom, is that the reference documentation is extremely complete. It is also very, very hard to find what you need, and search results are very hit and miss.
-
-I've been mulling over this problem of Fantom examples for some time now (as it's been brought up in the past) and thought I'd share my ideas...
-
-...I'm sharing my thoughts (and not just forging ahead) because a) I'm not always right(!) and b) it'd be nice to hear other ideass
-
+I've been mulling over this problem of Fantom examples for some time now (as it's been brought up a couple of times in the past) and here are some thoughts:
 
 
 Problem
 *******
-So you need Fantom examples, and lots of them. The problem is twofold:
+So you need Fantom examples, and lots of them. The problem is two-fold:
 
- - people who need examples don't know the answer
+ - people who have questions and need examples don't know the answers
  - people who have the answers, don't know the questions
 
 This forum isn't a great media for hunting down examples or answers to specific questions because:
 
+ - answers are not immediate
  - search results are a mix of reference documentation and forum posts
  - forum posts are often too advanced for newcomers...
  - ...which acts as a barrier for people wanting to ask simple questions
 
 
-
-Proposal 1 - How Do I...
-*************************
+How Do I...
+***********
 So I was thinking of creating a simple Q&A web site aimed at beginners.
 
-The front page is a search box prefixed with "How do I..." and you type in the rest. Examples would be:
+The front page is a search box prefixed with "How do I..." and you type in the rest.
 
- - How do I read a File to a Str?
- - How do I open a Window?
- - How do I create an empty List?
+Each question has it's own answer page with a brief answer and links to relivant documentation. If the answer doesn't exist then the question is popped on a list for admins and others to complete.
 
-Each question has it's own answer page with a brief answer and links to relivant documentation.
+The problem with this is that it's a lot of work for the admins and it'll soon get very repetiive. And there's still the problem that the content doesn't immediately exist.
+
+In all, a bad idea.
 
 
 
-Proposal 2 - Tell me about...
-*****************************
+Tell Me About...
+****************
+
+Something I noticed when I was learning Fantom, is that the reference documentation is extremely complete and contains all the answers. I also noticed that it is very, very hard to find what you need, and google search results are very hit and miss (due to forum postings, et al).
+
+So I was thinking of a better way to index and search the Fantom documentation, and came up with **Tell Me About:**
+
+Documentation headings are pretty descriptive, so how about they are indexed and ranked for one word searches. The engine would then supply instant snippets of documentation, complete with links to the Fantom website.
+
+I've quickly prototyped it, and made it available as a simple script here:
+
+[Tell Me About on IDEone - http://ideone.com/Rrwjx3]`http://ideone.com/Rrwjx3`
+
+You should be able to run the script on IDEone and try it out yourself.
+
+Whereas running it as a script and viewing text output may be of limited use, I'm thinking of running it on a simple one-page website as a subdomain of either [Fantom-Factory]`http://www.fantomfactory.org/` or [Fantom-Lang]`http://fantom-lang.org/`.
+
+To re-itereate, the Fantom documentation is actually pretty good, and I'd hope that a tool like this would help expose it more.
+
+For completeness, a sample search currently looks like this:
+
+pre>
+> fan tellMeAbout pods
+
+(Documentation)
+http://fantom.org/doc/docLang/Pods
+
+docLang
+  Pods
+
+Pods are the top of Fantom's namespace as well as the unit of deployment.  A
+pod's name is globally unique and is used to organize the top level of Fantom's
+namespace.  In this respect pods serve the purpose of both a Java package and a
+JAR file (or .NET namespace and DLL).
+
+--------------------------------------------------------------------------------
+
+(Documentation)
+http://fantom.org/doc/docLang/Structure#pods
+
+docLang
+  Structure
+    2. Pods
+
+Pods are the top of Fantom's namespace as well as the unit of deployment.  A
+pod's name is globally unique and is used to organize the top level of Fantom's
+namespace. Pod names are similar to Java packages or C# namespaces.  To
+guarantee uniqueness, try use a naming convention which won't produce conflicts
+(see [conventions]`Conventions#naming`).
+
+...
+
+--------------------------------------------------------------------------------
+
+(Documentation)
+http://fantom.org/doc/docLang/Pods#meta
+
+docLang
+  Pods
+    2. Pod Meta
+
+Pods do not use [Facets]`Facets` for metadata like types and slots.  Rather pod
+metadata is managed as name/value pairs.  Key metadata about your pod is defined
+in the [build script]`docTools::Build#buildPod`:
+
+...
+
+--------------------------------------------------------------------------------
+
+(Type)
+http://fantom.org/doc/sys/Pod
+
+sys
+  Pod
+
+Pod represents a module of Types.  Pods serve as a type namespace
+as well as unit of deployment and versioning.
+
+--------------------------------------------------------------------------------
+
+(Method)
+http://fantom.org/doc/sys/Type#pod
+
+sys
+  Type
+    pod()
+
+Parent pod which defines this type.  For parameterized types derived
+from List, Map, or Func, this method always returns the sys pod.
+
+Examples:
+  Str#.pod         => sys
+  acme::Foo#.pod   => acme
+  acme::Foo[]#.pod => sys
+
+<pre

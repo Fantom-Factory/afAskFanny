@@ -11,7 +11,7 @@
 **        and got one.
 ** 
 ** <pre 
-const class TextWrapper {
+internal const class TextWrapper {
 
 	** If 'true', then the text is trimmed.
 	const Bool trim					:= true
