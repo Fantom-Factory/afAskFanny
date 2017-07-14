@@ -46,7 +46,7 @@ class IndexBuilder {
 	}
 
 	This indexFandoc(Str pod, Str type, InStream in) {
-		doIndexFandoc(pod, type, in, null).map { it.toSection }
+		doIndexFandoc(pod, type, in, null, null).map { it.toSection }
 		return this
 	}
 
@@ -66,12 +66,24 @@ class IndexBuilder {
 	
 	private Void indexDocs(Str podName, SectionBuilder podSec) {
 		podFile := Env.cur.findPodFile(podName)
-		Zip.open(podFile).contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.each |File fandocFile| {
+		zip 	:= Zip.open(podFile)
+		index	:= zip.contents[`/doc/index.fog`]
+		files	:= null as File[] 
+		if (index != null) {
+			fog := index.readObj as Obj[]
+			names := fog.map { it is List ? (it as List).first : null }.exclude { it == null }
+			files = names.map |con| { zip.contents.find |v, k| { k ==`/doc/${con}.fandoc` } }.exclude { it == null }	// exclude null incase we have a dodgy index.fog with unkown file names
+		} else
+			files = zip.contents.findAll |file, uri| { uri.ext == "fandoc" && uri.path[0] == "doc" }.vals
+		
+		files.each |File fandocFile, i| {
+			idx := index != null ? i+1 : null
+
 			typeSec  := fandocFile.name == "pod.fandoc"
 				? podSec
-				: SectionBuilder.makeChapter(podName, fandocFile.basename) { it.parents.push(podSec) }
+				: SectionBuilder.makeChapter(podName, fandocFile.basename, idx) { it.parents.push(podSec) }
 
-			secs := doIndexFandoc(podName, fandocFile.basename, fandocFile.in, typeSec)
+			secs := doIndexFandoc(podName, fandocFile.basename, fandocFile.in, typeSec, idx)
 			secs.each {
 				it.parents.push(typeSec)
 				if (typeSec !== podSec)
@@ -82,9 +94,10 @@ class IndexBuilder {
 				sections.add(typeSec.toSection)
 			sections.addAll(secs.map { it.toSection })
 		}
+		zip.close
 	}	
 
-	private SectionBuilder[] doIndexFandoc(Str pod, Str type, InStream in, SectionBuilder? parent) {
+	private SectionBuilder[] doIndexFandoc(Str pod, Str type, InStream in, SectionBuilder? parent, Int? idx) {
 		doc := FandocParser().parse("${pod}::${type}", in, true)
 		
 		overview := false
@@ -95,7 +108,7 @@ class IndexBuilder {
 				if (parent != null && bobs.isEmpty && (elem as Heading).title == "Overview")
 					overview = true
 				else
-					bobs.add(SectionBuilder.makeDoc(pod, type, elem, bobs, overview))
+					bobs.add(SectionBuilder.makeDoc(pod, type, elem, bobs, overview, idx))
 				
 			} else {
 				// ? 'cos not all fandocs start with a heading!

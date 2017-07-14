@@ -59,7 +59,7 @@ internal class SectionBuilder {
 		}
 	}
 	
-	new makeChapter(Str pod, Str fileBaseName) {
+	new makeChapter(Str pod, Str fileBaseName, Int? idx) {
 		this.what 		= "Documentation"
 		this.pod		= pod
 		this.type		= fileBaseName
@@ -67,9 +67,12 @@ internal class SectionBuilder {
 		this.fanUrl		= "${pod}::${fileBaseName}"
 		this.content	= DocNode[,]
 		this.keywords	= type.toDisplayName.split.map { stem(it) }
+		
+		if (idx != null)
+			title = idx.toStr + ". " + title
 	}
 
-	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview) {
+	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview, Int? idx) {
 		if (type == "pod") type = "index"
 		this.what 		= "Documentation"
 		this.pod		= pod
@@ -92,6 +95,8 @@ internal class SectionBuilder {
 		// cater for missing out 'Overview' sections
 		if (overview)
 			levs.push(levs.pop.increment)
+		if (idx != null)
+			levs.push(idx)
 		
 		chapter := Version(levs.reverse)		
 		this.title = "${chapter}. ${heading.title}"
