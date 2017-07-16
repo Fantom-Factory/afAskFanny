@@ -1,3 +1,6 @@
+using fandoc::Link
+using fandoc::HtmlDocWriter
+using fandoc::FandocParser
 
 const class Section {
 	const Str		what
@@ -31,6 +34,19 @@ const class Section {
 		}
 		text += "\n" + content
 		return "\n\n" + TextWrapper { normaliseWhitespace = false }.wrap(text, maxWidth)
+	}
+	
+	Str toHtml(Uri baseUrl := `http://fantom.org/doc/`) {
+		buf := Buf()
+		out := HtmlDocWriter(buf.out)
+		out.onLink = |Link link| {
+			link.uri = resolve(link.uri, baseUrl).encode
+		}
+
+		doc := FandocParser().parse(fanUrl, content.in)
+		doc.writeChildren(out)
+		
+		return buf.flip.readAllStr
 	}
 	
 	Uri webUrl() {

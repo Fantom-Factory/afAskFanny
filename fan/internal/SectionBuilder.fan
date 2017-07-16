@@ -55,12 +55,12 @@ internal class SectionBuilder {
 		method := slot as DocMethod
 		if (method != null) {
 			this.what = "Method"
-			title += "(" + method.params.join(", ") { it.toStr } + ")"
+			title += ("(" + method.params.join(", ") { it.toStr } + ")").replace("sys::", "")
 		}
 	}
 	
 	new makeChapter(Str pod, Str fileBaseName, Int? idx) {
-		this.what 		= "Documentation"
+		this.what 		= "Chapter"
 		this.pod		= pod
 		this.type		= fileBaseName
 		this.title		= fileBaseName
