@@ -19,14 +19,18 @@ internal const class TellMeAboutMod : WebMod {
 	
 	override Void onGet() {
 		name := req.modRel.path.first
+
 		if (name == null)
 			onIndex
 		else if (name == "about")
 			onAbout
-		else if (name == "web")
+		else if (name == "doc")
 			onPodFile(req.modRel.relTo(`/`))
+		else if (name == "web")
+			// manually add 'res' to prevent *any* pod resource from being served
+			onPodFile(`res/` + req.modRel.relTo(`/`))
 		else if (name == "favicon.ico")
-			onPodFile(`web/${name}`)
+			onPodFile(`res/web/${name}`)
 		else
 			res.sendErr(404)
 	}
@@ -46,7 +50,9 @@ internal const class TellMeAboutMod : WebMod {
 			out.tag("meta", "property='og:type'        content='website'").nl
 			out.tag("meta", "property='og:title'       content='${windowTitle}'").nl
 			out.tag("meta", "property='og:url'         content='${baseUrl}'").nl
-			//out.tag("meta", "property='og:image'       content='${baseUrl}/pod/${pod.name}/doc/ogimage.png'").nl
+			out.tag("meta", "property='og:image'       content='${baseUrl}doc/ogimage.png'").nl
+			out.tag("meta", "property='og:image:width' content='1200'").nl
+			out.tag("meta", "property='og:image:height' content='800'").nl
 			out.tag("meta", "property='og:description' content=\"${windowDesc}\"").nl
 			out.tag("link", "href='${baseUrl}' rel='canonical'").nl
 			out.tag("link", "href='/web/website.min.css' type='text/css' rel='stylesheet'").nl		
@@ -90,7 +96,7 @@ internal const class TellMeAboutMod : WebMod {
 //			              }(document, 'script', 'twitter-wjs'));")
 //			out.scriptEnd
 
-		out.script.w(`fan://${typeof.pod}/res/web/jquery-3.2.1.min.js`.get->readAllStr).scriptEnd
+		out.script.w(`fan://${typeof.pod}/res/web/jquery-3.2.1.slim.min.js`.get->readAllStr).scriptEnd
 		out.script.w(`fan://${typeof.pod}/res/web/tab.js`.get->readAllStr).scriptEnd
 		out.script.w(`fan://${typeof.pod}/res/web/util.js`.get->readAllStr).scriptEnd
 		
@@ -261,8 +267,7 @@ internal const class TellMeAboutMod : WebMod {
 	
    	** Serve up pod resources.
 	private Void onPodFile(Uri path) {
-		// manually add 'res' to prevent *any* pod resource from being served
-    	file := (File?) `fan://${pod.name}/res/${path}`.get(null, false)
+    	file := (File?) `fan://${pod.name}/${path}`.get(null, false)
     	if (file == null || !file.exists) { res.sendErr(404); return }
     	FileWeblet(file).onService
    	}

@@ -22,12 +22,14 @@ pre {
 	box-shadow			: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 5px rgba(0, 15, 38, 0.8);
 }
 
+/*
 .nav-link {
 	// re-add this back in
 	@include hover-focus {
 		text-decoration	: underline;
 	}
 }
+*/
 
 .logo {
 	width				: 300px;
@@ -42,7 +44,7 @@ pre {
 }
 
 .blurb {
-	margin-top			: $spacer * 0.25;
+	margin-top			: $spacer * 0.75;
 }
 
 .card {
