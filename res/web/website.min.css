@@ -8,4 +8,4 @@
 /*
  * Tell Me About... 
  *
- */html{overflow-y:scroll}h1{margin-top:1rem}h2,h3{margin-top:3rem}pre{border-radius:0.25rem;background-color:#f8f9fa;border:1px solid rgba(0,0,0,0.125);padding:.5rem}.navbar{box-shadow:0 1px 0 rgba(255,255,255,0.1) inset,0 1px 5px rgba(0,15,38,0.8)}.nav-link:focus,.nav-link:hover{text-decoration:underline}.logo{width:300px;height:55px;position:absolute;top:0}.fanny{width:160px;height:160px}.blurb{margin-top:0.25rem}.card{width:100%}.card-subtitle{margin-bottom:0.25rem}.monofont{font-family:Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+ */html{overflow-y:scroll}h1{margin-top:1rem}h2,h3{margin-top:3rem}pre{border-radius:0.25rem;background-color:#f8f9fa;border:1px solid rgba(0,0,0,0.125);padding:.5rem}.navbar{box-shadow:0 1px 0 rgba(255,255,255,0.1) inset,0 1px 5px rgba(0,15,38,0.8)}.logo{width:300px;height:55px;position:absolute;top:0}.fanny{width:160px;height:160px}.blurb{margin-top:0.75rem}.card{width:100%}.card-subtitle{margin-bottom:0.25rem}.monofont{font-family:Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
