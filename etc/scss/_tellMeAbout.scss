@@ -1,0 +1,58 @@
+
+html {
+	overflow-y			: scroll;
+}
+
+h1 {
+	margin-top			: $spacer;
+}
+
+h2, h3 {
+	margin-top			: $spacer * 3;
+}
+
+pre {
+	@include border-radius($border-radius);
+	background-color	: $gray-100;
+	border				: 1px solid rgba($black,.125);
+	padding				: .5rem;
+}
+
+.navbar {
+	box-shadow			: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 5px rgba(0, 15, 38, 0.8);
+}
+
+.nav-link {
+	// re-add this back in
+	@include hover-focus {
+		text-decoration	: underline;
+	}
+}
+
+.logo {
+	width				: 300px;
+	height				: 55px;
+	position			: absolute;
+	top					: 0;
+}
+
+.fanny {
+	width				: 160px;
+	height				: 160px;
+}
+
+.blurb {
+	margin-top			: $spacer * 0.25;
+}
+
+.card {
+	width				: 100%;
+}
+
+.card-subtitle {
+	margin-bottom		: $spacer * 0.25;
+}
+
+.monofont {
+	font-family			: $font-family-monospace;
+}
