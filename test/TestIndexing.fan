@@ -19,7 +19,7 @@ internal class TestIndexing : Test {
 		tellMeAbout("safe") //-> 2.6
 		
 		
-		pods := index.tellMeAbout("pod")
+		pods := index.askFanny("pod")
 		sec  := pods[0]
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Pods")
@@ -51,7 +51,7 @@ internal class TestIndexing : Test {
 
 		
 		
-		safe := index.tellMeAbout("safe")
+		safe := index.askFanny("safe")
 		sec  = safe.first
 		verifyEq(sec.pod, "docLang")
 		verifyEq(sec.type, "Expressions")
@@ -77,7 +77,7 @@ internal class TestIndexing : Test {
 		
 		
 		
-		fandoc := index.tellMeAbout("fandoc")
+		fandoc := index.askFanny("fandoc")
 		sec  = fandoc[0]
 		verifyEq(sec.pod, "fandoc")
 		verifyEq(sec.type, null)
@@ -97,10 +97,6 @@ internal class TestIndexing : Test {
 	}
 	
 	Void tellMeAbout(Str keyword) {
-		secs := index.tellMeAbout(keyword)
-		
-		out := secs.join("\n\n" + ("-" * 80)) { it.toPlainText(80) }
-		echo(out)
+		secs := index.askFanny(keyword)
 	}
-	
 }

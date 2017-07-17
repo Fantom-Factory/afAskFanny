@@ -4,7 +4,7 @@ const class Index {
 	
 	internal new make(|This| f) { f(this) }
 
-	Section[] tellMeAbout(Str keyword) {
+	Section[] askFanny(Str keyword) {
 		if (keyword.contains(" "))
 			throw ArgErr("Keywords can not contain whitespace! $keyword")
 		
