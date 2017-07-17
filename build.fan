@@ -3,8 +3,14 @@ using build
 class Build : BuildPod {
 	new make() {
 		podName = "afAskFanny"
-		summary = "Documentation Index for Fantom"
-		version = Version("0.0.1")
+		summary = "Mini search engine for the Fantom reference documentation"
+		version = Version("0.0.2")
+
+		meta = [	
+			"pod.dis"		: "Ask Fanny",
+			"repo.tags"		: "app, misc, system",
+			"repo.public"	: "true",
+		]
 
 		depends = [
 			"sys          1.0.69 - 1.0",
