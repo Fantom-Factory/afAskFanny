@@ -15,10 +15,6 @@ But searching can be difficult if you don't know exactly where to look... it is 
 
 
 
-*The Fantom documentation is actually pretty good, but it's sometimes hard to find what you're looking for. I hope "Ask Fanny" changes that. - Steve Eynon*
-
-
-
 API [#api]
 ***
 The API contains an [IndexBuilder]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/IndexBuilder` that creates an [Index]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/Index` which you query for [Section]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/Section` results.

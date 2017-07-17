@@ -111,6 +111,7 @@ internal const class TellMeAboutMod : WebMod {
 		out.div("class='container'")
 
 		out.h1.w("About").h1End
+		out.p.i.w("\"The Fantom documentation is actually pretty good, but it's sometimes hard to find what you're looking for. I hope 'Ask Fanny' changes that.\" - Steve Eynon").iEnd.pEnd
 
 		url := `fan://${typeof.pod}/doc/pod.fandoc`
 		str := ((File) url.get).readAllStr
