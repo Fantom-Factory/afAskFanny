@@ -4,10 +4,13 @@ const class Index {
 	
 	internal new make(|This| f) { f(this) }
 
-	Section[] askFanny(Str keyword) {
+	Section[] askFanny(Str? keyword) {
+		if (keyword?.trimToNull == null)
+			return Section#.emptyList
 		if (keyword.contains(" "))
-			throw ArgErr("Keywords can not contain whitespace! $keyword")
+			throw ArgErr("Keyword may not contain whitespace! $keyword")
 		
+		keyword	= keyword.lower
 		secs	:= (Section[]) (sections[keyword] ?: Section[,]).rw		
 		stemmed := SectionBuilder.stem(keyword)
 		if (stemmed != keyword)

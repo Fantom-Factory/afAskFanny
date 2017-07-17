@@ -2,7 +2,7 @@ using build
 
 class Build : BuildPod {
 	new make() {
-		podName = "afTellMeAbout"
+		podName = "afAskFanny"
 		summary = "Documentation Index for Fantom"
 		version = Version("0.0.1")
 
