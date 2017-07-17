@@ -4,17 +4,20 @@ using fandoc::HtmlDocWriter
 
 @NoDoc
 internal const class TellMeAboutMod : WebMod {
-
 	private const Str	windowTitle	:= "Ask Fanny"
 	private const Str	windowDesc	:= "Ask Fanny - a mini search engine for the Fantom reference documentation; created by Alien-Factory"
 	private const Uri	baseUrl
+	private const Str?	gaAccountNo
 	private const Index	index
 	private const Pod	pod
 	
 	new make(Bool indexAllPods := false) {
-		pod		= typeof.pod
-		baseUrl	= Env.cur.vars.get("${pod.name}.baseUrl", "http://tellMeAbout.fantom-lang.org/").toUri
-		index 	= IndexBuilder() { if (indexAllPods) it.indexAllPods; else it.indexCorePods }.build
+		// note there's a config.props on the prod server
+		props		:= |->Str:Str| { try return `config.props`.toFile.readProps; catch return [:] }()
+		pod			= typeof.pod
+		baseUrl		= props.get("baseUrl", 		"http://localhost/").toUri
+		gaAccountNo	= props.get("gaAccountNo",	null)
+		index 		= IndexBuilder() { if (indexAllPods) it.indexAllPods; else it.indexCorePods }.build
 	}
 	
 	override Void onGet() {
@@ -56,6 +59,7 @@ internal const class TellMeAboutMod : WebMod {
 			out.tag("meta", "property='og:description' content=\"${windowDesc}\"").nl
 			out.tag("link", "href='${baseUrl}' rel='canonical'").nl
 			out.tag("link", "href='/web/website.min.css' type='text/css' rel='stylesheet'").nl		
+			out.tag("link", "href='/favicon.ico' rel='shortcut icon'").nl
 		out.headEnd		
 		out.body.nl
 		renderHeader(out)
@@ -75,31 +79,13 @@ internal const class TellMeAboutMod : WebMod {
 
 		renderFooter(out)
 
-//			out.script.w("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-//			              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-//			              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-//			              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-//			              ga('create', 'UA-33997125-11', 'auto');
-//			              ga('send', 'pageview');")
-//			out.scriptEnd
-
-//			out.script.w("window.twttr = (function(d, s, id) {
-//			                var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-//			                if (d.getElementById(id)) return t;
-//			                js = d.createElement(s);
-//			                js.id = id;
-//			                js.src = 'https://platform.twitter.com/widgets.js';
-//			                fjs.parentNode.insertBefore(js, fjs);
-//			                t._e = [];
-//			                t.ready = function(f) { t._e.push(f); };
-//			                return t;
-//			              }(document, 'script', 'twitter-wjs'));")
-//			out.scriptEnd
-
-		out.script.w(`fan://${typeof.pod}/res/web/jquery-3.2.1.slim.min.js`.get->readAllStr).scriptEnd
-		out.script.w(`fan://${typeof.pod}/res/web/tab.js`.get->readAllStr).scriptEnd
-		out.script.w(`fan://${typeof.pod}/res/web/util.js`.get->readAllStr).scriptEnd
+		if (query.size > 0) {
+			out.script("src='web/jquery-3.2.1.slim.min.js'").scriptEnd
+			out.script("src='web/util.js'").scriptEnd
+			out.script("src='web/tab.js'").scriptEnd
+		}
 		
+		renderGoogleAnal(out)
 		out.divEnd.nl
 		out.bodyEnd.nl
 		out.htmlEnd.nl
@@ -132,6 +118,7 @@ internal const class TellMeAboutMod : WebMod {
 		doc.writeChildren(HtmlDocWriter(out))
 
 		renderFooter(out)
+		renderGoogleAnal(out)
 		out.divEnd.nl
 		out.bodyEnd.nl
 		out.htmlEnd.nl
@@ -263,6 +250,19 @@ internal const class TellMeAboutMod : WebMod {
 //				out.a(section.webUrl).w(section.webUrl).aEnd
 //			out.divEnd
 		out.divEnd.nl		
+	}
+	
+	private Void renderGoogleAnal(WebOutStream out) {
+		if (gaAccountNo == null) return
+		out.script.w(
+			"(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			 ga('create', 'UA-33997125-11', 'auto');
+			 ga('send', 'pageview');"
+		)
+		out.scriptEnd
 	}
 	
    	** Serve up pod resources.
