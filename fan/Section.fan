@@ -2,6 +2,7 @@ using fandoc::Link
 using fandoc::HtmlDocWriter
 using fandoc::FandocParser
 
+** A search result.
 const class Section {
 	const Str		what
 	const Str		pod
@@ -36,7 +37,7 @@ const class Section {
 		return "\n\n" + TextWrapper { normaliseWhitespace = false }.wrap(text, maxWidth)
 	}
 	
-	Str toHtml(Uri baseUrl := `http://fantom.org/doc/`) {
+	Str contentAsHtml(Uri baseUrl := `http://fantom.org/doc/`) {
 		buf := Buf()
 		out := HtmlDocWriter(buf.out)
 		out.onLink = |Link link| {

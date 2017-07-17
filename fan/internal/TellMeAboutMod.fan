@@ -1,7 +1,7 @@
 using web
 
 @NoDoc
-const class TellMeAboutMod : WebMod {
+internal const class TellMeAboutMod : WebMod {
 
 	private const Str	windowTitle	:= "Tell Me About..."
 	private const Str	windowDesc	:= "Tell Me About... Fantom - a mini search engine for the Fantom reference documentation; created by Alien-Factory"
@@ -9,10 +9,10 @@ const class TellMeAboutMod : WebMod {
 	private const Index	index
 	private const Pod	pod
 	
-	new make() {
+	new make(Bool indexAllPods := false) {
 		pod		= typeof.pod
 		baseUrl	= Env.cur.vars.get("${pod.name}.baseUrl", "http://tellMeAbout.fantom-lang.org/").toUri
-		index 	= IndexBuilder().indexCorePods.build
+		index 	= IndexBuilder() { if (indexAllPods) it.indexAllPods; else it.indexCorePods }.build
 	}
 	
 	override Void onGet() {
@@ -61,6 +61,10 @@ const class TellMeAboutMod : WebMod {
 
 		out.div("class='container'")
 		
+		out.div("class='text-center text-muted blurb'")
+			out.i.w("A mini search engine for the Fantom reference documentation").iEnd
+		out.divEnd
+		
 		q := req.modRel.query["q"] ?: ""
 		out.form("class='form-inline my-6' method='GET' action='/'")
 			out.label("for='q' class='mr-2'").w("Tell Me About:").labelEnd
@@ -99,10 +103,11 @@ const class TellMeAboutMod : WebMod {
 				out.w("""<svg xmlns="http://www.w3.org/2000/svg" width="114" height="20"><linearGradient id="shield-b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><mask id="shield-a"><rect width="114" height="20" rx="3" fill="#fff"/></mask><g mask="url(#shield-a)"><path fill="#555" d="M0 0h63v20H0z"/><path fill="#9f9f9f" d="M63 0h51v20H63z"/><path fill="url(#shield-b)" d="M0 0h114v20H0z"/></g><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="31.5" y="15" fill="#010101" fill-opacity=".3">written in</text><text x="31.5" y="14">written in</text><text x="87.5" y="15" fill="#010101" fill-opacity=".3">Fantom</text><text x="87.5" y="14">Fantom</text></g></svg>""")
 			out.aEnd
 			out.a(`http://eggbox.fantomfactory.org/pods/${pod.name}/`, "title='Tell Me More'")
-				out.w("""<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="202" height="20"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="202" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path fill="#555" d="M0 0h77v20H0z"/><path fill="#4c1" d="M77 0h125v20H77z"/><path fill="url(#b)" d="M0 0h202v20H0z"/></g><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="38.5" y="15" fill="#010101" fill-opacity=".3">powered by</text><text x="38.5" y="14">powered by</text><text x="138.5" y="15" fill="#010101" fill-opacity=".3">${pod.name} v${pod.version}</text><text x="138.5" y="14">${pod.name} v${pod.version}</text></g></svg>""")
+				out.w("""<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="202" height="20"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="202" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path fill="#555" d="M0 0h77v20H0z"/><path fill="#4c1" d="M77 0h125v20H77z"/><path fill="url(#b)" d="M0 0h202v20H0z"/></g><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="38.5" y="15" fill="#010101" fill-opacity=".3">powered by</text><text x="38.5" y="14">powered by</text><text x="138.5" y="15" fill="#010101" fill-opacity=".3">Tell Me About v${pod.version}</text><text x="138.5" y="14">Tell Me About v${pod.version}</text></g></svg>""")
 			out.aEnd
 			out.div("class='float-right text-muted small'").w("Written by ")
 				out.a(`http://www.alienfactory.co.uk/`).w("Steve Eynon").aEnd
+				out.w(", 2017")
 			out.divEnd
 			
 			out.script.w(`fan://${typeof.pod}/res/web/jquery-3.2.1.min.js`.get->readAllStr).scriptEnd
@@ -117,7 +122,7 @@ const class TellMeAboutMod : WebMod {
 
 	private Void writeResults(WebOutStream out) {
 		q		 := req.modRel.query["q"].split.first
-		sections := index.tellMeAbout(q)
+		sections := index.askFanny(q)
 	
 		docs	:= Section[,]
 		types	:= Section[,]
@@ -136,9 +141,9 @@ const class TellMeAboutMod : WebMod {
 		}
 		
 		if (sections.size == 1)
-			out.p.span("class='text-muted'").w("${sections.size} result found for: ").spanEnd.w(q).pEnd
+			out.p.span("class='text-muted'").w("${sections.size} result found for: ").spanEnd.w(q.capitalize).pEnd
 		else
-			out.p.span("class='text-muted'").w("${sections.size} results found for: ").spanEnd.w(q).pEnd
+			out.p.span("class='text-muted'").w("${sections.size} results found for: ").spanEnd.w(q.capitalize).pEnd
 		
 		pill := |Int size| {
 			if (size == 0)
@@ -192,7 +197,7 @@ const class TellMeAboutMod : WebMod {
 				out.h4End
 		
 				out.div("class='result'")
-					out.print(section.toHtml)
+					out.print(section.contentAsHtml)
 				out.divEnd
 			out.divEnd
 //			out.div("class='card-footer'")

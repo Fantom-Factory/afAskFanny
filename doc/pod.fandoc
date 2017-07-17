@@ -1,0 +1,55 @@
+
+Overview [#overview]
+********
+Ask Fanny is a mini search engine for the reference documentation of the Fantom Programming Language - see `http://fantom.org/`.
+
+It's a library that indexes and ranks all the headings and titles of the core Fantom documentation and libraies for single words, and makes them available as:
+
+ - a programmable API
+ - a Command Line Program
+ - a Website
+
+Every standard Fantom installation comes complete with examples and reference documentation. Tools such as [Explorer]`http://eggbox.fantomfactory.org/pods/afExplorer/doc/#fandocViewer` let you view that documentation, which is great if you know what you're looking for or wish read it from start to finish like a novel.
+
+But searching can be difficult if you don't know exactly where to look... it is hoped "Ask Fanny" fills that gap.
+
+
+
+*The Fantom documentation is actually pretty good, but it's sometimes hard to find what you're looking for. I hope "Ask Fanny" changes that. - Steve Eynon*
+
+
+
+API [#api]
+***
+The API contains an [IndexBuilder]`afAskFanny::IndexBuilder` that creates an [Index]`afIndex` which you query for [Section]`afAskFanny::Section` results.
+
+
+  index   := IndexBuilder().indexAllPods.build
+  results := index.askFanny("Fantom")
+
+  results.each { echo(it.toPlainText) }
+
+
+
+Command Line Program [#cmdLineProg]
+********************
+Ask Fanny may be run from a command line to give instant search results:
+
+  > fan afAskFanny Maps
+
+Use the '-h' flag to list available options.
+
+  > fan afAskFanny -h
+
+
+
+Website [#website]
+*******
+Ask Fanny is also distributed with a fully functioning web site. To launch it, use the '-webserver' option from the command line.
+
+  > fan afAskFanny -webserver
+
+By default Ask Fanny runs on port 8069 so point your browser at 'http://localhost:8069/' to view.
+
+The Ask Fanny website is also availble online at `http://askFanny.fantom-lang.org`.
+
