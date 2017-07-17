@@ -1,0 +1,41 @@
+/*
+  padding: $code-padding-y $code-padding-x;
+  font-size: $code-font-size;
+  color: $code-color;
+  background-color: $code-bg;
+  */
+  
+  
+$fanny-darkBlue:	#001133;
+$fanny-blue:		#0275D8;
+$fanny-silver:		#C9CED2;
+$fanny-white:		#FFFFFF;
+
+//$blue:				$fanny-blue;
+
+ 
+$theme-colors: (
+	primary:		$blue,
+	secondary:		$gray-600,
+	success:		$green,
+	info: 			$cyan,
+	warning:		$yellow,
+	danger:			$red,
+	light:			$gray-100,
+	dark:			$fanny-darkBlue
+);
+
+$spacer				: 1rem;
+$spacers			: (
+	0	: 0,
+	1	: ($spacer * 0.5),
+	2	: ($spacer * 1.0),
+	3	: ($spacer * 1.5),
+	4	: ($spacer * 2.0),
+	5	: ($spacer * 2.5),
+	6	: ($spacer * 3.0),
+	7	: ($spacer * 3.5),
+	8	: ($spacer * 4.0)
+);
+
+$headings-margin-bottom: $spacer;
