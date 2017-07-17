@@ -21,8 +21,7 @@ But searching can be difficult if you don't know exactly where to look... it is 
 
 API [#api]
 ***
-The API contains an [IndexBuilder]`afAskFanny::IndexBuilder` that creates an [Index]`afIndex` which you query for [Section]`afAskFanny::Section` results.
-
+The API contains an [IndexBuilder]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/IndexBuilder` that creates an [Index]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/Index` which you query for [Section]`http://eggbox.fantomfactory.org/pods/afAskFanny/api/Section` results.
 
   index   := IndexBuilder().indexAllPods.build
   results := index.askFanny("Fantom")
@@ -35,21 +34,33 @@ Command Line Program [#cmdLineProg]
 ********************
 Ask Fanny may be run from a command line to give instant search results:
 
+pre>
   > fan afAskFanny Maps
+<pre
 
 Use the '-h' flag to list available options.
 
+pre>
   > fan afAskFanny -h
-
+<pre
 
 
 Website [#website]
 *******
 Ask Fanny is also distributed with a fully functioning web site. To launch it, use the '-webserver' option from the command line.
 
+pre>
   > fan afAskFanny -webserver
+<pre
 
 By default Ask Fanny runs on port 8069 so point your browser at 'http://localhost:8069/' to view.
 
 The Ask Fanny website is also availble online at `http://askFanny.fantom-lang.org`.
+
+
+
+Fanny [#fanny]
+*****
+Fanny is the mascot of the Fantom programming language as named by Andy Frank (one of Fantom's creators) in this [forum post]`http://fantom.org/forum/topic/2125#c1`. The mascot cartoon itself was evolved for the [Fantom-Lang website]`http://fantom-lang.org/`.
+
 
