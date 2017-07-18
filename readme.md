@@ -1,8 +1,8 @@
-#Ask Fanny v0.0.0
+#Ask Fanny v0.0.2
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
-[![pod: v0.0.0](http://img.shields.io/badge/pod-v0.0.0-yellow.svg)](http://www.fantomfactory.org/pods/afAskFanny)
+[![pod: v0.0.2](http://img.shields.io/badge/pod-v0.0.2-yellow.svg)](http://www.fantomfactory.org/pods/afAskFanny)
 ![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)
 
 ## Overview
@@ -18,8 +18,6 @@ It's a library that indexes and ranks all the headings and titles of the core Fa
 Every standard Fantom installation comes complete with examples and reference documentation. Tools such as [Explorer](http://eggbox.fantomfactory.org/pods/afExplorer/doc/#fandocViewer) let you view that documentation, which is great if you know what you're looking for or wish read it from start to finish like a novel.
 
 But searching can be difficult if you don't know exactly where to look... it is hoped "Ask Fanny" fills that gap.
-
-*The Fantom documentation is actually pretty good, but it's sometimes hard to find what you're looking for. I hope "Ask Fanny" changes that. - Steve Eynon*
 
 ## Install
 
