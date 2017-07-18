@@ -3,68 +3,67 @@ using compilerDoc
 
 internal class SectionBuilder {
 	static const Uri	webBaseUrl	:= `http://fantom.org/doc/`
-	Str					fanUrl
-	Str					what
+	Str					qname
+	SectionType			what
 	Str					pod
 	Str?				type
 	Str					title
 	Str?				fandoc
-	Bool				isApi
 	Str[]				keywords
 	Heading? 			heading
 	DocNode[]?			content
 	SectionBuilder[]	parents		:= SectionBuilder[,]
 	
 	new makePod(DocPod pod) {
-		this.what		= "Pod"
+		this.what		= SectionType.pod
 		this.pod		= pod.name
 		this.title		= pod.name
 		this.fandoc		= pod.summary
-		this.fanUrl		= "${pod.name}::index"
+		this.qname		= "${pod.name}::index"
 		this.keywords	= [pod.name]
 	}
 	
 	new makeType(DocType type) {
-		this.what		= "Type"
+		this.what		= SectionType.type
 		this.pod		= type.pod.name
 		this.type		= type.name
 		this.title		= type.qname
-		this.fanUrl		= "${this.pod}::${this.type}"
+		this.qname		= "${this.pod}::${this.type}"
 		this.fandoc		= type.doc.text
 		this.keywords	= [type.name]
-		this.isApi		= true
 	}
 	
 	new makeSlot(DocSlot slot) {
-		this.what		= "Slot"
 		this.pod		= slot.parent.pod
 		this.type		= slot.parent.name
 		this.title		= slot.qname
-		this.fanUrl		= "${this.pod}::${this.type}.${slot.name}"
+		this.qname		= "${this.pod}::${this.type}.${slot.name}"
 		this.fandoc		= slot.doc.text
 		this.keywords	= [slot.name]
-		this.isApi		= true
+
+		// keep the ctor gods happy
+		this.what 		= SectionType.field
 		
 		field := slot as DocField
 		if (field != null) {
-			this.what = "Field"
+			this.what = SectionType.field
 			if (field.init != null)
 				title += " := ${field.init}"
 		}
 
 		method := slot as DocMethod
 		if (method != null) {
-			this.what = "Method"
+			this.what = SectionType.method
 			title += ("(" + method.params.join(", ") { it.toStr } + ")").replace("sys::", "")
 		}
 	}
 	
 	new makeChapter(Str pod, Str fileBaseName, Int? idx) {
-		this.what 		= "Chapter"
+		this.what 		= SectionType.chapter
 		this.pod		= pod
 		this.type		= fileBaseName
 		this.title		= fileBaseName
-		this.fanUrl		= "${pod}::${fileBaseName}"
+		this.qname		= "${pod}::${fileBaseName}"
 		this.content	= DocNode[,]
 		this.keywords	= type.toDisplayName.split.map { stem(it) }
 		
@@ -74,11 +73,11 @@ internal class SectionBuilder {
 
 	new makeDoc(Str pod, Str type, Heading heading, SectionBuilder[] bobs, Bool overview, Int? idx) {
 		if (type == "pod") type = "index"
-		this.what 		= "Documentation"
+		this.what 		= SectionType.documentation
 		this.pod		= pod
 		this.type		= type
 		this.heading 	= heading
-		this.fanUrl		= "${pod}::${type}#${heading.anchorId}"
+		this.qname		= "${pod}::${type}#${heading.anchorId}"
 		this.content	= DocNode[,]
 
 		levs := Int[1]
@@ -121,7 +120,7 @@ internal class SectionBuilder {
 		// this happens when writing pod.fandoc overviews to pod sections
 		if (content == null) {
 			content = DocNode[,]
-			fanUrl += "#overview"
+			qname += "#overview"
 			if (fandoc != null) {
 				content = DocNode[ Para().add(DocText(fandoc)) ]
 				fandoc  = null
@@ -143,15 +142,13 @@ internal class SectionBuilder {
 			it.pod		= this.pod
 			it.type		= this.type
 			it.title	= this.title
-			it.isApi	= this.isApi
-			it.isDoc	= this.isApi.not
 			it.keywords	= this.keywords
 			it.content	= fandoc
-			it.fanUrl	= this.fanUrl
+			it.qname	= this.qname
 			it.parents	= this.parents.map { it.toSection }
 		}
 	}
 	
-	override Str toStr() { fanUrl }
+	override Str toStr() { qname }
 }
 

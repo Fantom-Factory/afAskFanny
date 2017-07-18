@@ -1,9 +1,11 @@
 
+** Index of Fantom documentation.
 const class Index {
 	internal const Str:Section[]	sections
 	
 	internal new make(|This| f) { f(this) }
 
+	** Seek the wisdom of the floating fantasm.
 	Section[] askFanny(Str? keyword) {
 		if (keyword?.trimToNull == null)
 			return Section#.emptyList
@@ -16,7 +18,7 @@ const class Index {
 		if (stemmed != keyword)
 			secs.addAll(sections[stemmed] ?: Section#.emptyList)
 
-		sortScore := |Section s->Int| { (s.parents.size * 2) + s.keywords.size + (s.isApi ? 10 : 0) }
+		sortScore := |Section s->Int| { (s.parents.size * 2) + s.keywords.size + (s.what.isApi ? 10 : 0) }
 		secs = secs.rw.sort |s1, s2| { sortScore(s1) <=> sortScore(s2) }
 		return secs
 	}

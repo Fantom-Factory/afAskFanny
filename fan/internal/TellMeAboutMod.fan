@@ -183,10 +183,10 @@ internal const class TellMeAboutMod : WebMod {
 		
 		sections.each |section| {
 			switch (section.what) {
-				case "Field":
-				case "Method":
+				case SectionType.field:
+				case SectionType.method:
 					slots.add(section)
-				case "Type":
+				case SectionType.type:
 					types.add(section)
 				default:
 					docs.add(section)
@@ -226,12 +226,12 @@ internal const class TellMeAboutMod : WebMod {
 		out.nl
 		out.div("class='card mt-3 mb-6'")
 			out.div("class='card-header text-muted'")
-				out.w(section.what + " &rarr; ")
+				out.w(section.what.dis + " &rarr; ")
 				out.a(section.webUrl).w(section.webUrl).aEnd
 			out.divEnd
 			out.div("class='card-body'")
 		
-				mono := |Section s->Str| { s.what != "Documentation" && s.what != "Chapter" ? "monofont " : "" }
+				mono := |Section s->Str| { s.what.isApi ? "monofont " : "" }
 				lev  := 0
 				section.parents.eachr |parent| {
 					out.div("class='card-subtitle ${mono(parent)}ml-${lev}'")
