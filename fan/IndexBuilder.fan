@@ -1,6 +1,7 @@
 using fandoc
 using compilerDoc
 
+** Indexes documents and pods to create an 'Index' instrance.
 class IndexBuilder {
 //	private static const Str[] corePodNames := "docIntro docLang docFanr docTools docDomkit build compiler compilerDoc compilerJava compilerJs concurrent dom domkit email fandoc fanr fansh flux fluxText fwt gfx icons inet obix sql syntax sys testCompiler testJava testNative testSys util web webfwt webmod wisp xml".split
 	private static const Str[] corePodNames := "docIntro docLang docTools docDomkit concurrent dom domkit email fandoc fwt gfx inet sys util web webfwt webmod wisp xml".split
@@ -8,6 +9,7 @@ class IndexBuilder {
 	private DocEnv docEnv	:= DefaultDocEnv()
 	Section[]	sections	:= Section[,]
 	
+	** Builds an 'Index' instance from the indexed documents.
 	Index build() {
 		keywords := sections.map { it.keywords }.flatten.unique.sort
 				
@@ -20,16 +22,22 @@ class IndexBuilder {
 		}
 	}
 
+	** Indexes all pods in the current Fantom installation.
 	This indexAllPods() {
 		Env.cur.findAllPodNames.each { indexPod(it) }
 		return this
 	}
 
+	** Indexes a subset of core pods from the standard Fantom installation;
+	** including 'sys' and all reference documentation. 
 	This indexCorePods() {
 		corePodNames.each { indexPod(it) }
 		return this
 	}
 	
+	** Indexes the contents of a pod, including:
+	**  - all documented types - '<pod>/doc/*.apidoc'
+	**  - all fandocs - '<pod>/doc/*.fandoc'
 	This indexPod(Str podName) {
 		podFile := Env.cur.findPodFile(podName)
 		if (podFile == null) return this	// todo make this checked??
@@ -45,6 +53,7 @@ class IndexBuilder {
 		return this
 	}
 
+	** Indexes a single fandoc file. Useful for adhoc documents.
 	This indexFandoc(Str pod, Str type, InStream in) {
 		doIndexFandoc(pod, type, in, null, null).map { it.toSection }
 		return this
