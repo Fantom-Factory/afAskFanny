@@ -22,12 +22,11 @@ class Main : AbstractMain {
 	Int port := 8069
 	
 	override Int run() {
-		
 		if (webserver) {
 			echo("Tell Me About website now available on: http://localhost:${this.port}/")
 			return runServices([WispService {
 				it.httpPort = this.port
-				it.root = TellMeAboutMod(all)
+				it.root = AskFannyWebMod(all)
 			}])			
 		}
 		

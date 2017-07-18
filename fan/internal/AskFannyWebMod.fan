@@ -3,7 +3,7 @@ using fandoc::FandocParser
 using fandoc::HtmlDocWriter
 
 @NoDoc
-internal const class TellMeAboutMod : WebMod {
+internal const class AskFannyWebMod : WebMod {
 	private const Str	windowTitle	:= "Ask Fanny"
 	private const Str	windowDesc	:= "Ask Fanny - a mini search engine for the Fantom reference documentation; created by Alien-Factory"
 	private const Uri	baseUrl
