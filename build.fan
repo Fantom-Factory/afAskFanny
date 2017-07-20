@@ -4,7 +4,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afAskFanny"
 		summary = "Mini search engine for the Fantom reference documentation"
-		version = Version("0.0.2")
+		version = Version("0.0.2.2")
 
 		meta = [	
 			"pod.dis"		: "Ask Fanny",

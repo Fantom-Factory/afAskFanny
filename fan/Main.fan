@@ -16,7 +16,7 @@ class Main : AbstractMain {
 	Int width := 80
 	
 	@Opt { help="Set to launch a web sever to view \"Ask Fanny\" in a browser" }
-	Bool webserver := true
+	Bool webserver
 	
 	@Opt { help="Port to run the web server on" }
 	Int port := 8069
