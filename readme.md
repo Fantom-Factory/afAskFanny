@@ -1,8 +1,8 @@
-#Ask Fanny v0.0.2.2
+#Ask Fanny v0.0.4
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
-[![pod: v0.0.2.2](http://img.shields.io/badge/pod-v0.0.2.2-yellow.svg)](http://www.fantomfactory.org/pods/afAskFanny)
+[![pod: v0.0.4](http://img.shields.io/badge/pod-v0.0.4-yellow.svg)](http://www.fantomfactory.org/pods/afAskFanny)
 ![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)
 
 ## Overview
@@ -75,4 +75,8 @@ The Ask Fanny website is also availble online at [http://askfanny.fantomfactory.
 ## Fanny
 
 Fanny is the mascot of the Fantom programming language as named by Andy Frank (one of Fantom's creators) in this [forum post](http://fantom.org/forum/topic/2125#c1). The mascot cartoon itself was evolved for the [Fantom-Lang website](http://fantom-lang.org/).
+
+## Remarks
+
+The *"Did you mean?"* feature taken from [Statistical Spelling Correction](https://github.com/rkoeninger/spelling) by Robert Koeninger.
 
