@@ -11,14 +11,19 @@ class IndexBuilder {
 	
 	** Builds an 'Index' instance from the indexed documents.
 	Index build() {
-		keywords := sections.map { it.keywords }.flatten.unique.sort
-				
+		allKeywords := sections.map { it.keywords }.flatten
+
+		counts := Str:Int[:] { def = 0 }
+		allKeywords.each |word| { counts[word] += 1 }
+		
+		keywords := counts.keys.sort
 		sections := Str:Section[][:]
 		keywords.each |keyword| {
 			sections[keyword] = this.sections.findAll { it.containsKeyword(keyword) }
 		}
 		return Index {
 			it.sections = sections 
+			it.counts	= counts
 		}
 	}
 

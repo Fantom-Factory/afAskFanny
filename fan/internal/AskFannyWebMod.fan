@@ -72,7 +72,9 @@ internal const class AskFannyWebMod : WebMod {
 		query	:= req.modRel.query.get("q", "").split.first
 		results	:= index.askFanny(query)
 		
-		renderForm(out, query, results.size)
+		didYouMean := index.didYouMean(query)
+
+		renderForm(out, query, results.size, didYouMean)
 		
 		if (query.size > 0)
 			renderResults(out, results)
@@ -138,7 +140,7 @@ internal const class AskFannyWebMod : WebMod {
 		out.navEnd.nl
 	}
 
-	private Void renderForm(WebOutStream out, Str q, Int size) {
+	private Void renderForm(WebOutStream out, Str q, Int size, Str[] didYouMean) {
 		out.div("class='row justify-content-md-center'").nl
 			out.div("class='col col-sm-12 col-md-9 col-lg-7 col-xl-6'").nl
 				out.div("class='d-none d-sm-block float-left m-3'").nl
@@ -151,9 +153,19 @@ internal const class AskFannyWebMod : WebMod {
 						out.span("class='input-group-btn'").nl
 							out.input("class='btn btn-outline-success' type='submit' value='Go!'").nl
 						out.spanEnd.nl
-					out.divEnd.nl
+					out.divEnd.nl		
 					if (q.size > 0)
 						out.print("<small class='form-text'>").span("class='text-muted'").w("${size} result") { if (size != 1) w("s") }.w(" found for: ").spanEnd.w(q.capitalize).print("</small>")
+					if (didYouMean.size > 0) {
+						out.print("<small class='form-text'>").span("class='text-muted'").w("Did you mean ")
+						didYouMean.each |did, i| {
+							out.a(`/?q=${did}`).w(did.capitalize).aEnd
+							if (i+1 < didYouMean.size)
+								out.w(", ")
+						}
+						out.w("?")
+						out.spanEnd.print("</small>")
+					}
 				out.formEnd.nl
 			out.divEnd.nl
 		out.divEnd.nl

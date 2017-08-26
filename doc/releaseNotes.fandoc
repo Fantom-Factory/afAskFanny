@@ -1,0 +1,9 @@
+v0.0.4
+======
+ - New: Added a *"Did you mean?"* section based on [Statistical Spelling Correction]`https://github.com/rkoeninger/spelling` by Robert Koeninger.
+ - Bug: The 'Main' program didn't actually print anything - Doh!
+
+v0.0.2
+======
+ - New: Initial release
+
