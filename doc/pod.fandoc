@@ -60,3 +60,7 @@ Fanny [#fanny]
 Fanny is the mascot of the Fantom programming language as named by Andy Frank (one of Fantom's creators) in this [forum post]`http://fantom.org/forum/topic/2125#c1`. The mascot cartoon itself was evolved for the [Fantom-Lang website]`http://fantom-lang.org/`.
 
 
+Remarks [#remarks]
+*******
+The *"Did you mean?"* feature taken from [Statistical Spelling Correction]`https://github.com/rkoeninger/spelling` by Robert Koeninger.
+

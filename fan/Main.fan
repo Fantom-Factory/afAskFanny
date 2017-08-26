@@ -30,8 +30,25 @@ class Main : AbstractMain {
 			}])			
 		}
 		
-		index := IndexBuilder() { if (all) it.indexAllPods; else it.indexCorePods }.build
-		index.askFanny(what).join("\n\n" + "".padl(width, '-')) { it.toPlainText(width) }
+		index   := IndexBuilder() { if (all) it.indexAllPods; else it.indexCorePods }.build
+		results := index.askFanny(what)
+		dashes  := "".padl(width, '-')
+
+		echo("${results.size} results found for: ${what.capitalize}\n")
+		if (results.size > 0) {
+			output := results.join("\n\n" + dashes) { it.toPlainText(width) }
+			echo(dashes + output)
+		}
+		
+		didYouMean := index.didYouMean(what)
+		if (didYouMean.size > 0) {
+			if (results.size > 0) {
+				echo(dashes)
+				echo
+			}
+			echo("Did you mean: " + didYouMean.join(", ") + "?")
+		}
+		
 		return 0
 	}
 	
