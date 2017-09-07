@@ -3,7 +3,7 @@
 const class Spelling {
 	static const Range letters := Range.makeInclusive(97, 122)
 
-	** Most probable spelling correction for `word`.
+	** Most probable spelling correction for 'word'.
 	Str correction(Str:Int counts, Str word) {
 		candidates(counts, word).max |x, y| { counts[x] <=> counts[y] }
 	}
