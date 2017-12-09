@@ -1,3 +1,7 @@
+v0.0.6
+======
+ - Chg: Added new pods introduced in 1.0.70.
+
 v0.0.4
 ======
  - New: Added a *"Did you mean?"* section based on [Statistical Spelling Correction]`https://github.com/rkoeninger/spelling` by Robert Koeninger.
